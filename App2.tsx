@@ -1,27 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
 import { useFonts, Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter'
 import { StyleSheet, Text, View } from 'react-native';
-import Titulo from './src/components/Titulo'
-import InputLogin from './src/components/InputLogin';
-import InputSenha from './src/components/InputSenha';
+import InputCadastroLogin from './src/components/inputCadastroLogin';
+import InputCadastroSenha from './src/components/inputCadastroSenha';
 import Botao from './src/components/Botao';
-import Botaop from './src/components/Botaop'
 
-export default function App() {
+export default function App2() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_600SemiBold,
   })
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) return null 
   return (
-    <View style={styles.container}>
-      <Titulo/>
-      <InputLogin />
-      <InputSenha />
-      <Botao/>
-      <Botaop textop = "Ainda não se cadastrou? Clique aqui!"/>
-      
-    </View>
+      <View style={styles.container}>
+        <InputCadastroLogin/>
+        <InputCadastroSenha/>
+        <Botao textoQ = "Cadastre-se"/>
+      </View>
   );
 }
 
@@ -33,3 +28,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
