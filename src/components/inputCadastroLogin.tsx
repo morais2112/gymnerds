@@ -1,27 +1,29 @@
 import { TextInput, StyleSheet } from "react-native"
 
-const inputCadastroLogin =()=>{
-    return(
+const InputCadastroLogin = () => {
+    return (
         <TextInput
-        placeholder="Cadastre seu login" 
-        style = {styles.inputCadastroLogin} 
+            placeholder="Cadastre seu login"
+            placeholderTextColor="#777"
+            style={styles.inputCadastroLogin}
         />
     )
 }
 
-export default inputCadastroLogin 
+export default InputCadastroLogin
 
 const styles = StyleSheet.create({
-    inputCadastroLogin:{
-        fontFamily: 'Inter_400Regular', 
-        width: 300,
-        height: 40,
+    inputCadastroLogin: {
+        fontFamily: "Inter_400Regular",
+        width: "85%",
+        maxWidth: 420,
+        height: 44,
         borderWidth: 1.5,
-        borderColor:"#ffffff",
+        borderColor: "#ffffff",
         borderRadius: 9,
-        paddingHorizontal: 10,
+        paddingHorizontal: 12,
         fontSize: 16,
         marginBottom: 10,
-        color:"#ffffff"
-    }
+        color: "#ffffff",
+    },
 })

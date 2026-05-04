@@ -1,27 +1,29 @@
 import { TextInput, StyleSheet } from "react-native"
 
-const inputLogin =()=>{
-    return(
+const InputLogin = () => {
+    return (
         <TextInput
-        placeholder="Digite seu login" 
-        style = {styles.inputLogin} 
+            placeholder="Digite seu login"
+            placeholderTextColor="#777"
+            style={styles.inputLogin}
         />
     )
 }
 
-export default inputLogin 
+export default InputLogin
 
 const styles = StyleSheet.create({
-    inputLogin:{
-        fontFamily: 'Inter_400Regular', 
-        width: 300,
-        height: 40,
+    inputLogin: {
+        fontFamily: "Inter_400Regular",
+        width: "85%",
+        maxWidth: 420,
+        height: 44,
         borderWidth: 1.5,
-        borderColor:"#ffffff",
+        borderColor: "#ffffff",
         borderRadius: 9,
-        paddingHorizontal: 10,
+        paddingHorizontal: 12,
         fontSize: 16,
         marginBottom: 10,
-        color:"#ffffff"
-    }
+        color: "#ffffff",
+    },
 })

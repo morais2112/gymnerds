@@ -1,7 +1,11 @@
-import{Text, TouchableOpacity, StyleSheet} from 'react-native'
+import { Text, TouchableOpacity, StyleSheet } from "react-native"
 
-const Botaop = (props:any)=>{
-    return(
+type BotaopProps = {
+    textop: string
+}
+
+const Botaop = (props: BotaopProps) => {
+    return (
         <TouchableOpacity>
             <Text style={styles.botao}>{props.textop}</Text>
         </TouchableOpacity>
@@ -11,15 +15,11 @@ const Botaop = (props:any)=>{
 export default Botaop
 
 const styles = StyleSheet.create({
-    botao:{
-        
+    botao: {
+        fontFamily: "Inter_400Regular",
         textAlign: "center",
         color: "#fcfcfc",
-        margin: 20
-    },
-
-    textop:{
-        fontFamily: 'Inter_400Regular',
+        margin: 20,
         fontSize: 14,
-    }
+    },
 })
