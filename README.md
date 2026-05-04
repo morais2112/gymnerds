@@ -22,7 +22,7 @@ O projeto foi construído com **React Native** utilizando a plataforma **Expo** 
 
 ## 📂 Estrutura do Projeto
 
-```text
+\```text
 ├── app/                  # Rotas e Ecrãs (Expo Router)
 │   ├── (tabs)/           # Navegação principal (Home, Exercícios, Fichas)
 │   ├── cadastro.tsx      # Ecrã de criação de conta
@@ -34,28 +34,32 @@ O projeto foi construído com **React Native** utilizando a plataforma **Expo** 
 │   ├── data/             # Stores do Zustand (fichas, prs) e lista de exercícios
 │   └── types/            # Definições de interfaces e tipos TypeScript
 └── assets/               # Imagens e ícones do sistema
-🛠️ Como Executar
+\```
+
+## 🛠️ Como Executar
+
 Siga os passos abaixo para rodar o projeto localmente:
 
-Clonar o repositório:
+1. **Clonar o repositório:**
+   \```bash
+   git clone [https://github.com/morais2112/gymnerds.git](https://github.com/morais2112/gymnerds.git)
+   cd GymNerds-main
+   \```
 
-Bash
-git clone [https://github.com/morais2112/gymnerds.git](https://github.com/morais2112/gymnerds.git)
-cd GymNerds-main
-Instalar as dependências:
+2. **Instalar as dependências:**
+   \```bash
+   npm install
+   \```
 
-Bash
-npm install
-Iniciar o servidor do Expo:
+3. **Iniciar o servidor do Expo:**
+   \```bash
+   npx expo start
+   \```
 
-Bash
-npx expo start
-Abrir a Aplicação:
+4. **Abrir a Aplicação:**
+   * Instale a app **Expo Go** no seu telemóvel (Android ou iOS).
+   * No terminal, será gerado um **QR Code**. Leia-o com a câmara do telemóvel ou através da app Expo Go.
+   * Se preferir, pressione `a` para abrir num emulador Android ou `i` para simulador iOS.
 
-Instale a app Expo Go no seu telemóvel (Android ou iOS).
-
-No terminal, será gerado um QR Code. Leia-o com a câmara do telemóvel ou através da app Expo Go.
-
-Se preferir, pressione a para abrir num emulador Android ou i para simulador iOS.
-
-Desenvolvido por [Seu Nome / Mateus Morais Lopes]
+---
+Desenvolvido por Mateus Morais Lopes e Ian de Oliveira Silva e Rosa
