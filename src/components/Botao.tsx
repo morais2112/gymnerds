@@ -1,29 +1,27 @@
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet } from "react-native"
 
-const botao=(props:any)=>{
-    return(
+type BotaoProps = {
+    textoQ?: string
+}
+
+const Botao = (props: BotaoProps) => {
+    return (
         <TouchableOpacity>
             <Text style={styles.botao}>{props.textoQ}</Text>
         </TouchableOpacity>
     )
 }
 
-export default botao
+export default Botao
 
 const styles = StyleSheet.create({
     botao: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: "Inter_400Regular",
         margin: 10,
         textAlign: "center",
         color: "#000000",
         backgroundColor: "#ffffff",
         padding: 10,
-        borderRadius: 10
-
+        borderRadius: 10,
     },
-    textoQ: {
-        fontSize: 24,
-        
-    }
-}
-)
+})

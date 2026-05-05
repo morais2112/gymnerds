@@ -28,7 +28,7 @@ const CardFicha = (props: CardFichaProps) => {
                 )}
             </View>
             <Text style={styles.qtd}>
-                {props.ficha.exercicios.length} exercicio(s)
+                {props.ficha.exercicios.length} exercício(s)
             </Text>
         </TouchableOpacity>
     )

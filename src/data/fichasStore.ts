@@ -1,14 +1,14 @@
 import { Ficha, Exercicio } from "../types"
 
-// Store em memoria com as fichas criadas pelo usuario
-// (entre os reloads da tela ela se mantem)
+// Store em memória com as fichas criadas pelo usuário
+// (entre os reloads da tela ela se mantém)
 let fichas: Ficha[] = []
 
-// Lista de listeners que sao chamados quando as fichas mudam
+// Lista de listeners que são chamados quando as fichas mudam
 type Listener = () => void
 const listeners: Listener[] = []
 
-// Notifica todas as telas que estao escutando mudancas
+// Notifica todas as telas que estão escutando mudanças
 const notificar = () => {
     listeners.forEach((l) => l())
 }
@@ -30,11 +30,11 @@ export const removeFicha = (id: string) => {
     notificar()
 }
 
-// Adiciona um exercicio a uma ficha existente
+// Adiciona um exercício a uma ficha existente
 export const addExercicioNaFicha = (idFicha: string, exercicio: Exercicio) => {
     fichas = fichas.map((f) => {
         if (f.id === idFicha) {
-            // evita adicionar o mesmo exercicio duas vezes
+            // Evita adicionar o mesmo exercício duas vezes
             const jaTem = f.exercicios.some((e) => e.id === exercicio.id)
             if (jaTem) return f
             return { ...f, exercicios: [...f.exercicios, exercicio] }
@@ -44,7 +44,7 @@ export const addExercicioNaFicha = (idFicha: string, exercicio: Exercicio) => {
     notificar()
 }
 
-// Inscreve uma tela para receber notificacoes
+// Inscreve uma tela para receber notificações
 export const subscribe = (listener: Listener): (() => void) => {
     listeners.push(listener)
     return () => {

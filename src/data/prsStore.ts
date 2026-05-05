@@ -1,6 +1,6 @@
 import { RegistroPR } from "../types"
 
-// Store em memoria com os registros de PR
+// Store em memória com os registros de PR
 let registros: RegistroPR[] = []
 
 type Listener = () => void
@@ -13,14 +13,14 @@ const notificar = () => {
 // Retorna todos os registros
 export const getRegistros = (): RegistroPR[] => registros
 
-// Retorna os registros de um exercicio especifico (mais recentes primeiro)
+// Retorna os registros de um exercício específico (mais recentes primeiro)
 export const getRegistrosDoExercicio = (exercicioId: string): RegistroPR[] => {
     return registros
         .filter((r) => r.exercicioId === exercicioId)
         .sort((a, b) => b.data.localeCompare(a.data))
 }
 
-// Retorna o PR atual (maior peso) de um exercicio, ou null se nao tiver
+// Retorna o PR atual (maior peso) de um exercício, ou null se não tiver
 export const getPRAtual = (exercicioId: string): number | null => {
     const lista = registros.filter((r) => r.exercicioId === exercicioId)
     if (lista.length === 0) return null
@@ -39,7 +39,7 @@ export const removeRegistro = (id: string) => {
     notificar()
 }
 
-// Inscreve uma tela para receber notificacoes de mudanca
+// Inscreve uma tela para receber notificações de mudança
 export const subscribe = (listener: Listener): (() => void) => {
     listeners.push(listener)
     return () => {

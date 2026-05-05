@@ -4,7 +4,7 @@ import { StyleSheet, TextInput } from "react-native"
 const InputCadastroSenha = () => {
     return (
         <TextInput
-            placeholder="Digite sua senha"
+            placeholder="Cadastre sua senha"
             placeholderTextColor="#777"
             secureTextEntry={true}
             style={styles.inputCadastroSenha}
