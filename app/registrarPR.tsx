@@ -15,6 +15,8 @@ import { router, useLocalSearchParams } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import { Exercicio, RegistroPR } from "../src/types"
 import { exercicios } from "../src/data/exercicios"
+import { labelArea } from "../src/data/labelsArea"
+import BodySilhueta from "../src/components/BodySilhueta"
 import {
     addRegistro,
     getRegistrosDoExercicio,
@@ -24,23 +26,17 @@ import {
 } from "../src/data/prsStore"
 
 export default function RegistrarPR() {
-    // useLocalSearchParams - recebe o id do exercício
     const params = useLocalSearchParams<{ exercicioId?: string }>()
 
-    // useState para o peso digitado
     const [peso, setPeso] = useState<string>("")
-
-    // useState para a lista de registros
     const [registros, setRegistros] = useState<RegistroPR[]>(
         params.exercicioId ? getRegistrosDoExercicio(params.exercicioId) : []
     )
 
-    // Encontra o exercício pelo id
     const exercicio: Exercicio | undefined = exercicios.find(
         (e) => e.id === params.exercicioId
     )
 
-    // Atualiza a lista quando o store mudar
     useEffect(() => {
         const unsub = subscribe(() => {
             if (params.exercicioId) {
@@ -50,15 +46,13 @@ export default function RegistrarPR() {
         return unsub
     }, [params.exercicioId])
 
-    // PR atual (maior peso registrado)
     const prAtual = params.exercicioId ? getPRAtual(params.exercicioId) : null
 
-    // Salva o novo registro
     const salvar = () => {
         if (!params.exercicioId) return
         const valor = parseFloat(peso.replace(",", "."))
         if (isNaN(valor) || valor <= 0) {
-            Alert.alert("Atenção", "Digite um peso válido (maior que zero).")
+            Alert.alert("Atencao", "Digite um peso valido (maior que zero).")
             return
         }
         const novo: RegistroPR = {
@@ -71,24 +65,19 @@ export default function RegistrarPR() {
         setPeso("")
     }
 
-    // Formata a data ISO para uma string amigável
     const formatarData = (iso: string): string => {
         const d = new Date(iso)
         const dia = String(d.getDate()).padStart(2, "0")
         const mes = String(d.getMonth() + 1).padStart(2, "0")
         const ano = d.getFullYear()
-        return `${dia}/${mes}/${ano}`
+        return dia + "/" + mes + "/" + ano
     }
 
-    // Caso não encontre o exercício
     if (!exercicio) {
         return (
             <SafeAreaView style={styles.safe}>
-                <Text style={styles.erro}>Exercício não encontrado.</Text>
-                <TouchableOpacity
-                    style={styles.botaoVoltar}
-                    onPress={() => router.back()}
-                >
+                <Text style={styles.erro}>Exercicio nao encontrado.</Text>
+                <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
                     <Text style={styles.textoBotaoVoltar}>Voltar</Text>
                 </TouchableOpacity>
             </SafeAreaView>
@@ -103,15 +92,15 @@ export default function RegistrarPR() {
             >
                 <View style={styles.container}>
                     <View style={styles.headerCard}>
-                        <Ionicons name="barbell" size={28} color="#ffffff" />
+                        <BodySilhueta area={exercicio.area} size={48} />
                         <View style={styles.headerInfo}>
                             <Text style={styles.exNome}>{exercicio.nome}</Text>
-                            <Text style={styles.exArea}>{exercicio.area}</Text>
+                            <Text style={styles.exArea}>{labelArea(exercicio.area)}</Text>
                         </View>
                         <View style={styles.prAtualBox}>
                             <Text style={styles.prAtualLabel}>PR atual</Text>
                             <Text style={styles.prAtualValor}>
-                                {prAtual !== null ? `${prAtual} kg` : "—"}
+                                {prAtual !== null ? prAtual + " kg" : "-"}
                             </Text>
                         </View>
                     </View>
@@ -131,11 +120,8 @@ export default function RegistrarPR() {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.subtitulo}>
-                        Histórico ({registros.length})
-                    </Text>
+                    <Text style={styles.subtitulo}>Historico ({registros.length})</Text>
 
-                    {/* FlatList com o histórico de registros */}
                     <FlatList
                         data={registros}
                         keyExtractor={(item) => item.id}
@@ -143,19 +129,13 @@ export default function RegistrarPR() {
                             <View style={styles.cardRegistro}>
                                 <View>
                                     <Text style={styles.regPeso}>{item.peso} kg</Text>
-                                    <Text style={styles.regData}>
-                                        {formatarData(item.data)}
-                                    </Text>
+                                    <Text style={styles.regData}>{formatarData(item.data)}</Text>
                                 </View>
                                 <TouchableOpacity
                                     onPress={() => removeRegistro(item.id)}
                                     style={styles.botaoRemover}
                                 >
-                                    <Ionicons
-                                        name="trash-outline"
-                                        size={20}
-                                        color="#ff4d4d"
-                                    />
+                                    <Ionicons name="trash-outline" size={20} color="#ff4d4d" />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -173,16 +153,9 @@ export default function RegistrarPR() {
 }
 
 const styles = StyleSheet.create({
-    safe: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-    },
+    safe: { flex: 1, backgroundColor: "#0f0f14" },
     flex: { flex: 1 },
-    container: {
-        flex: 1,
-        paddingHorizontal: 16,
-        paddingTop: 16,
-    },
+    container: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
     headerCard: {
         backgroundColor: "#1c1c24",
         borderColor: "#2a2a35",
@@ -194,44 +167,14 @@ const styles = StyleSheet.create({
         gap: 12,
         marginBottom: 18,
     },
-    headerInfo: {
-        flex: 1,
-    },
-    exNome: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
-    exArea: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-        marginTop: 2,
-    },
-    prAtualBox: {
-        alignItems: "flex-end",
-    },
-    prAtualLabel: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 11,
-    },
-    prAtualValor: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 18,
-    },
-    label: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 14,
-        marginBottom: 6,
-    },
-    linhaInput: {
-        flexDirection: "row",
-        gap: 10,
-        marginBottom: 18,
-    },
+    headerInfo: { flex: 1 },
+    exNome: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
+    exArea: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12, marginTop: 2 },
+    prAtualBox: { alignItems: "flex-end" },
+    prAtualLabel: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 11 },
+    prAtualValor: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 18 },
+    label: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 14, marginBottom: 6 },
+    linhaInput: { flexDirection: "row", gap: 10, marginBottom: 18 },
     input: {
         flex: 1,
         fontFamily: "Inter_400Regular",
@@ -249,16 +192,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 10,
     },
-    textoSalvar: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-    },
-    subtitulo: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-        marginBottom: 8,
-    },
+    textoSalvar: { fontFamily: "Inter_600SemiBold", color: "#000000" },
+    subtitulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16, marginBottom: 8 },
     cardRegistro: {
         backgroundColor: "#1c1c24",
         borderColor: "#2a2a35",
@@ -270,35 +205,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    regPeso: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
-    regData: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-        marginTop: 2,
-    },
-    botaoRemover: {
-        padding: 6,
-    },
-    vazio: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        textAlign: "center",
-        marginTop: 24,
-    },
-    listaConteudo: {
-        paddingBottom: 16,
-    },
-    erro: {
-        fontFamily: "Inter_400Regular",
-        color: "#ffffff",
-        textAlign: "center",
-        marginTop: 40,
-    },
+    regPeso: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
+    regData: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12, marginTop: 2 },
+    botaoRemover: { padding: 6 },
+    vazio: { fontFamily: "Inter_400Regular", color: "#aaaaaa", textAlign: "center", marginTop: 24 },
+    listaConteudo: { paddingBottom: 16 },
+    erro: { fontFamily: "Inter_400Regular", color: "#ffffff", textAlign: "center", marginTop: 40 },
     botaoVoltar: {
         backgroundColor: "#ffffff",
         marginTop: 16,
@@ -307,8 +219,5 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         alignItems: "center",
     },
-    textoBotaoVoltar: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-    },
+    textoBotaoVoltar: { fontFamily: "Inter_600SemiBold", color: "#000000" },
 })

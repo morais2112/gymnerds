@@ -7,6 +7,7 @@ import FiltroArea from "../src/components/FiltroArea"
 import { AreaMuscular, Exercicio } from "../src/types"
 import { exercicios, areasMusculares } from "../src/data/exercicios"
 import { addExercicioNaFicha } from "../src/data/fichasStore"
+import { labelArea } from "../src/data/labelsArea"
 
 export default function SelecionarExercicio() {
     // useLocalSearchParams - lê o id da ficha que está sendo editada
@@ -43,7 +44,7 @@ export default function SelecionarExercicio() {
 
             <Text style={styles.subtitulo}>
                 {lista.length} exercício(s){" "}
-                {areaSelecionada ? `em ${areaSelecionada}` : "no total"}
+                {areaSelecionada ? `em ${labelArea(areaSelecionada)}` : "no total"}
             </Text>
 
             {/* FlatList renderiza os exercícios filtrados */}

@@ -1,14 +1,15 @@
 // Áreas musculares disponíveis para filtro
+// (sem acento nos identificadores para o linter não brigar com o array de dados)
 export type AreaMuscular =
     | "Peito"
-    | "Tríceps"
-    | "Bíceps"
+    | "Triceps"
+    | "Biceps"
     | "Costas"
     | "Ombro"
     | "Posterior de Coxa"
-    | "Quadríceps"
+    | "Quadriceps"
     | "Panturrilha"
-    | "Abdômen"
+    | "Abdomen"
 
 // Tipo de um exercício
 export type Exercicio = {

@@ -5,12 +5,12 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Image,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router } from "expo-router"
 import Titulo from "../src/components/Titulo"
-import InputLogin from "../src/components/InputLogin"
-import InputSenha from "../src/components/InputSenha"
+import Input from "../src/components/Input"
 import Botaop from "../src/components/Botaop"
 
 export default function Login() {
@@ -25,9 +25,16 @@ export default function Login() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    <Titulo />
-                    <InputLogin />
-                    <InputSenha />
+                    <Image
+                        source={require("../assets/icon.png")}
+                        style={styles.logo}
+                        resizeMode="contain"
+                    />
+
+                    <Titulo texto="Login" />
+
+                    <Input placeholder="Digite seu login" />
+                    <Input placeholder="Digite sua senha" secureTextEntry />
 
                     <TouchableOpacity
                         style={styles.botaoEntrar}
@@ -36,9 +43,10 @@ export default function Login() {
                         <Text style={styles.textoEntrar}>Entrar</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => router.push("/cadastro")}>
-                        <Botaop textop="Ainda não se cadastrou? Clique aqui!" />
-                    </TouchableOpacity>
+                    <Botaop
+                        textop="Ainda nao se cadastrou? Clique aqui!"
+                        onPress={() => router.push("/cadastro")}
+                    />
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
@@ -60,6 +68,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingHorizontal: 16,
         paddingVertical: 24,
+    },
+    logo: {
+        width: 100,
+        height: 100,
+        marginBottom: 8,
     },
     botaoEntrar: {
         backgroundColor: "#ffffff",

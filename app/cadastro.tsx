@@ -5,11 +5,12 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Image,
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router } from "expo-router"
-import InputCadastroLogin from "../src/components/inputCadastroLogin"
-import InputCadastroSenha from "../src/components/inputCadastroSenha"
+import Input from "../src/components/Input"
+import Titulo from "../src/components/Titulo"
 
 export default function Cadastro() {
     return (
@@ -23,8 +24,16 @@ export default function Cadastro() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
-                    <InputCadastroLogin />
-                    <InputCadastroSenha />
+                    <Image
+                        source={require("../assets/icon.png")}
+                        style={styles.logo}
+                        resizeMode="contain"
+                    />
+
+                    <Titulo texto="Cadastro" />
+
+                    <Input placeholder="Cadastre seu login" />
+                    <Input placeholder="Cadastre sua senha" secureTextEntry />
 
                     <TouchableOpacity
                         style={styles.botao}
@@ -43,7 +52,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#0f0f14",
     },
-    flex: { flex: 1 },
+    flex: {
+        flex: 1,
+    },
     container: {
         flexGrow: 1,
         backgroundColor: "#0f0f14",
@@ -52,6 +63,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 24,
     },
+    logo: {
+        width: 90,
+        height: 90,
+        marginBottom: 4,
+    },
     botao: {
         backgroundColor: "#ffffff",
         width: "85%",
@@ -59,6 +75,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         borderRadius: 10,
         alignItems: "center",
+        marginTop: 8,
     },
     texto: {
         fontFamily: "Inter_600SemiBold",

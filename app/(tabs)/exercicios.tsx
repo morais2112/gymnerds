@@ -10,52 +10,45 @@ import {
 import { router } from "expo-router"
 import { Ionicons } from "@expo/vector-icons"
 import FiltroArea from "../../src/components/FiltroArea"
+import BodySilhueta from "../../src/components/BodySilhueta"
 import { AreaMuscular, Exercicio } from "../../src/types"
 import { exercicios, areasMusculares } from "../../src/data/exercicios"
 import { getPRAtual, subscribe } from "../../src/data/prsStore"
+import { labelArea } from "../../src/data/labelsArea"
 
 export default function ExerciciosTab() {
     const { width } = useWindowDimensions()
 
-    // useState - filtro de área e contador de mudanças (para refazer render)
-    const [areaSelecionada, setAreaSelecionada] = useState<AreaMuscular | null>(
-        null
-    )
+    const [areaSelecionada, setAreaSelecionada] = useState<AreaMuscular | null>(null)
     const [versao, setVersao] = useState<number>(0)
 
-    // Quando o store de PRs mudar, incrementa versão para forçar re-render
     useEffect(() => {
         const unsub = subscribe(() => setVersao((v) => v + 1))
         return unsub
     }, [])
 
-    // Aplica o filtro de área na lista
     const lista: Exercicio[] = useMemo(() => {
         if (!areaSelecionada) return exercicios
         return exercicios.filter((e) => e.area === areaSelecionada)
     }, [areaSelecionada])
 
-    // Padding horizontal proporcional para telas grandes não ficarem com cards gigantes
     const paddingH = Math.max(12, Math.min(width * 0.04, 20))
 
     return (
         <View style={styles.container}>
-            {/* Cabeçalho */}
             <View style={[styles.cabecalho, { paddingHorizontal: paddingH }]}>
                 <Text style={styles.titulo}>Meus PRs</Text>
                 <Text style={styles.subtitulo}>
-                    Toque num exercício para registrar seu peso máximo
+                    Toque num exercicio para registrar seu peso maximo
                 </Text>
             </View>
 
-            {/* Filtro horizontal com altura fixa */}
             <FiltroArea
                 areas={areasMusculares}
                 areaSelecionada={areaSelecionada}
                 onSelecionar={setAreaSelecionada}
             />
 
-            {/* Lista vertical ocupa todo o espaço que sobra */}
             <FlatList
                 style={styles.lista}
                 data={lista}
@@ -73,17 +66,15 @@ export default function ExerciciosTab() {
                                 })
                             }
                         >
+                            <View style={styles.iconeBox}>
+                                <BodySilhueta area={item.area} size={32} />
+                            </View>
                             <View style={styles.cardEsquerda}>
-                                <Text
-                                    style={styles.nome}
-                                    numberOfLines={1}
-                                    ellipsizeMode="tail"
-                                >
+                                <Text style={styles.nome} numberOfLines={1} ellipsizeMode="tail">
                                     {item.nome}
                                 </Text>
-                                <Text style={styles.area}>{item.area}</Text>
+                                <Text style={styles.area}>{labelArea(item.area)}</Text>
                             </View>
-
                             <View style={styles.cardDireita}>
                                 {pr !== null ? (
                                     <>
@@ -105,9 +96,7 @@ export default function ExerciciosTab() {
                     )
                 }}
                 ListEmptyComponent={
-                    <Text style={styles.vazio}>
-                        Nenhum exercício para essa área.
-                    </Text>
+                    <Text style={styles.vazio}>Nenhum exercicio para essa area.</Text>
                 }
                 contentContainerStyle={styles.listaConteudo}
                 showsVerticalScrollIndicator={false}
@@ -117,88 +106,38 @@ export default function ExerciciosTab() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-        paddingTop: 12,
-    },
-    cabecalho: {
-        marginBottom: 4,
-    },
-    titulo: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 22,
-    },
-    subtitulo: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 13,
-        marginTop: 2,
-    },
-    lista: {
-        flex: 1,
-    },
+    container: { flex: 1, backgroundColor: "#0f0f14", paddingTop: 12 },
+    cabecalho: { marginBottom: 4 },
+    titulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 22 },
+    subtitulo: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 13, marginTop: 2 },
+    lista: { flex: 1 },
     card: {
         backgroundColor: "#1c1c24",
         borderRadius: 12,
-        padding: 14,
+        padding: 12,
         marginVertical: 6,
         borderWidth: 1.5,
         borderColor: "#2a2a35",
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
+        gap: 12,
     },
-    cardEsquerda: {
-        flex: 1,
-        marginRight: 10,
-    },
-    nome: {
-        fontFamily: "Inter_600SemiBold",
-        fontSize: 15,
-        color: "#ffffff",
-        marginBottom: 4,
-    },
-    area: {
-        fontFamily: "Inter_400Regular",
-        fontSize: 12,
-        color: "#aaaaaa",
-    },
-    cardDireita: {
-        flexDirection: "row",
-        alignItems: "baseline",
-        gap: 4,
-        flexShrink: 0,
-    },
-    prValor: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 20,
-    },
-    prUnidade: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 13,
-    },
-    semPR: {
-        flexDirection: "row",
+    iconeBox: {
+        width: 50,
+        height: 56,
+        borderRadius: 10,
+        backgroundColor: "#2a2a35",
         alignItems: "center",
-        gap: 4,
+        justifyContent: "center",
     },
-    semPRTexto: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-    },
-    listaConteudo: {
-        paddingTop: 4,
-        paddingBottom: 24,
-    },
-    vazio: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        textAlign: "center",
-        marginTop: 24,
-    },
+    cardEsquerda: { flex: 1 },
+    nome: { fontFamily: "Inter_600SemiBold", fontSize: 15, color: "#ffffff", marginBottom: 4 },
+    area: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#aaaaaa" },
+    cardDireita: { flexDirection: "row", alignItems: "baseline", gap: 4, flexShrink: 0 },
+    prValor: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 20 },
+    prUnidade: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 13 },
+    semPR: { flexDirection: "row", alignItems: "center", gap: 4 },
+    semPRTexto: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12 },
+    listaConteudo: { paddingTop: 4, paddingBottom: 24 },
+    vazio: { fontFamily: "Inter_400Regular", color: "#aaaaaa", textAlign: "center", marginTop: 24 },
 })
