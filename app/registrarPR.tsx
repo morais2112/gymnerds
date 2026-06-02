@@ -120,7 +120,23 @@ export default function RegistrarPR() {
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.subtitulo}>Historico ({registros.length})</Text>
+                    <View style={styles.linhaHistorico}>
+                        <Text style={styles.subtitulo}>Historico ({registros.length})</Text>
+                        {registros.length > 0 && (
+                            <TouchableOpacity
+                                onPress={() =>
+                                    router.push({
+                                        pathname: "/grafico",
+                                        params: { exercicioId: exercicio.id },
+                                    })
+                                }
+                                style={styles.botaoGrafico}
+                            >
+                                <Ionicons name="trending-up" size={14} color="#000000" />
+                                <Text style={styles.botaoGraficoTexto}>Ver grafico</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
 
                     <FlatList
                         data={registros}
@@ -193,7 +209,27 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     textoSalvar: { fontFamily: "Inter_600SemiBold", color: "#000000" },
-    subtitulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16, marginBottom: 8 },
+    subtitulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
+    linhaHistorico: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 8,
+    },
+    botaoGrafico: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        backgroundColor: "#ffffff",
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 8,
+    },
+    botaoGraficoTexto: {
+        fontFamily: "Inter_600SemiBold",
+        color: "#000000",
+        fontSize: 12,
+    },
     cardRegistro: {
         backgroundColor: "#1c1c24",
         borderColor: "#2a2a35",

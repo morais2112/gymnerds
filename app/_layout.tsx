@@ -1,14 +1,22 @@
+import { useEffect } from "react"
 import { Stack } from "expo-router"
 import { useFonts, Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter"
 import { View } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { StatusBar } from "expo-status-bar"
+import { initDatabase } from "../src/database/db"
 
 export default function Layout() {
     const [fontsLoaded] = useFonts({
         Inter_400Regular,
         Inter_600SemiBold,
     })
+
+    // useEffect com array vazio = roda 1 vez na montagem (Aula 4)
+    // Cria as tabelas no SQLite caso ainda nao existam (Aula 7)
+    useEffect(() => {
+        initDatabase()
+    }, [])
 
     if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: "#0f0f14" }} />
 
@@ -32,6 +40,7 @@ export default function Layout() {
                     options={{ title: "Selecionar Exercício" }}
                 />
                 <Stack.Screen name="registrarPR" options={{ title: "Registrar PR" }} />
+                <Stack.Screen name="grafico" options={{ title: "Evolução do PR" }} />
             </Stack>
         </SafeAreaProvider>
     )

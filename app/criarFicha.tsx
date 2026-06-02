@@ -12,27 +12,27 @@ import {
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router, useLocalSearchParams } from "expo-router"
-import CardExercicio from "../src/components/CardExercicio"
-import { Exercicio } from "../src/types"
+import CardExercicioFicha from "../src/components/CardExercicioFicha"
+import { ExercicioFicha } from "../src/types"
 import {
     addFicha,
     getFichas,
+    removeExercicioDaFicha,
     subscribe,
 } from "../src/data/fichasStore"
+import { getPRAtual } from "../src/data/prsStore"
 
 export default function CriarFicha() {
-    // useLocalSearchParams - lê os parâmetros da URL.
-    // Se a tela receber idFicha, é modo edição.
     const params = useLocalSearchParams<{ idFicha?: string }>()
 
-    // useState para o nome da ficha e a lista de exercícios escolhidos
+    // useState para nome da ficha e lista de exercicios da ficha
     const [nomeFicha, setNomeFicha] = useState<string>("")
-    const [exerciciosFicha, setExerciciosFicha] = useState<Exercicio[]>([])
+    const [exerciciosFicha, setExerciciosFicha] = useState<ExercicioFicha[]>([])
     const [idFichaAtual, setIdFichaAtual] = useState<string | null>(
         params.idFicha ?? null
     )
 
-    // Se veio um idFicha nos params, carrega os dados da ficha
+    // useEffect com dependencia: carrega dados se a tela receber idFicha
     useEffect(() => {
         if (params.idFicha) {
             const f = getFichas().find((x) => x.id === params.idFicha)
@@ -44,7 +44,7 @@ export default function CriarFicha() {
         }
     }, [params.idFicha])
 
-    // Se inscreve no store para atualizar quando exercícios são adicionados
+    // useEffect com cleanup: re-carrega quando o store mudar
     useEffect(() => {
         const unsub = subscribe(() => {
             if (idFichaAtual) {
@@ -86,6 +86,11 @@ export default function CriarFicha() {
         router.replace("/fichas")
     }
 
+    const removerExercicio = (idExercicio: string) => {
+        if (!idFichaAtual) return
+        removeExercicioDaFicha(idFichaAtual, idExercicio)
+    }
+
     return (
         <SafeAreaView style={styles.safe} edges={["bottom"]}>
             <KeyboardAvoidingView
@@ -110,10 +115,7 @@ export default function CriarFicha() {
                             <Text style={styles.textoBotaoSecundario}>+ Exercício</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={styles.botaoSalvar}
-                            onPress={salvarFicha}
-                        >
+                        <TouchableOpacity style={styles.botaoSalvar} onPress={salvarFicha}>
                             <Text style={styles.textoBotaoSalvar}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
@@ -122,11 +124,17 @@ export default function CriarFicha() {
                         Exercícios da ficha ({exerciciosFicha.length})
                     </Text>
 
-                    {/* FlatList com os exercícios já escolhidos */}
+                    {/* FlatList com os exercicios + series, reps e PR */}
                     <FlatList
                         data={exerciciosFicha}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => <CardExercicio exercicio={item} />}
+                        keyExtractor={(item) => item.exercicio.id}
+                        renderItem={({ item }) => (
+                            <CardExercicioFicha
+                                item={item}
+                                prAtual={getPRAtual(item.exercicio.id)}
+                                onRemover={removerExercicio}
+                            />
+                        )}
                         ListEmptyComponent={
                             <Text style={styles.vazio}>
                                 Nenhum exercício adicionado. Clique em "+ Exercício".
@@ -141,10 +149,7 @@ export default function CriarFicha() {
 }
 
 const styles = StyleSheet.create({
-    safe: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-    },
+    safe: { flex: 1, backgroundColor: "#0f0f14" },
     flex: { flex: 1 },
     container: {
         flex: 1,
@@ -169,11 +174,7 @@ const styles = StyleSheet.create({
         marginBottom: 14,
         fontSize: 15,
     },
-    linhaBotoes: {
-        flexDirection: "row",
-        gap: 10,
-        marginBottom: 14,
-    },
+    linhaBotoes: { flexDirection: "row", gap: 10, marginBottom: 14 },
     botaoSecundario: {
         flex: 1,
         borderWidth: 1.5,
@@ -210,7 +211,5 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 24,
     },
-    listaConteudo: {
-        paddingBottom: 16,
-    },
+    listaConteudo: { paddingBottom: 16 },
 })
