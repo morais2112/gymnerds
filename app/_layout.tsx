@@ -12,8 +12,6 @@ export default function Layout() {
         Inter_600SemiBold,
     })
 
-    // useEffect com array vazio = roda 1 vez na montagem (Aula 4)
-    // Cria as tabelas no SQLite caso ainda nao existam (Aula 7)
     useEffect(() => {
         initDatabase()
     }, [])

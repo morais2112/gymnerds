@@ -1,5 +1,3 @@
-// Areas musculares disponiveis para filtro
-// (sem acento nos identificadores; o label com acento vem de labelsArea)
 export type AreaMuscular =
     | "Peito"
     | "Triceps"
@@ -11,31 +9,48 @@ export type AreaMuscular =
     | "Panturrilha"
     | "Abdomen"
 
-// Tipo de um exercicio (catalogo geral)
 export type Exercicio = {
     id: string
     nome: string
     area: AreaMuscular
 }
 
-// Tipo de um exercicio DENTRO de uma ficha (com series e repeticoes)
 export type ExercicioFicha = {
     exercicio: Exercicio
     series: number
     repeticoes: number
 }
 
-// Tipo de uma ficha de treino
 export type Ficha = {
     id: string
     nome: string
     exercicios: ExercicioFicha[]
 }
 
-// Um registro de PR (peso maximo) para um exercicio numa data especifica
 export type RegistroPR = {
     id: string
     exercicioId: string
     peso: number
-    data: string // ISO date
+    data: string
 }
+
+export type RegistroPeso = {
+    id: string
+    peso: number
+    data: string
+}
+
+// Perfil do usuario: altura (cm) e idade (anos)
+export type Perfil = {
+    altura: number | null
+    idade: number | null
+}
+
+// Classificacao do IMC
+export type ClassificacaoIMC =
+    | "Abaixo do peso"
+    | "Peso normal"
+    | "Sobrepeso"
+    | "Obesidade grau I"
+    | "Obesidade grau II"
+    | "Obesidade grau III"

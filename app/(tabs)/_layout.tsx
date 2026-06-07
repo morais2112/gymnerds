@@ -3,7 +3,6 @@ import { Ionicons } from "@expo/vector-icons"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function TabsLayout() {
-    // Pega o inset de baixo (gestures bar / barra de navegação do sistema)
     const insets = useSafeAreaInsets()
 
     return (
@@ -52,6 +51,15 @@ export default function TabsLayout() {
                     title: "Exercícios",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="barbell-outline" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="meusDados"
+                options={{
+                    title: "Meus dados",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="person-outline" color={color} size={size} />
                     ),
                 }}
             />

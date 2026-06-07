@@ -1,11 +1,8 @@
-// Versao NATIVA (iOS / Android) - usa SQLite real
 import * as SQLite from "expo-sqlite"
 
 const db = SQLite.openDatabaseSync("academia.db")
 
-// Inicializa as tabelas + migracoes
 export const initDatabase = () => {
-    // execSync - cria as tabelas se nao existirem (Aula 7)
     db.execSync(`
         CREATE TABLE IF NOT EXISTS fichas (
             id TEXT PRIMARY KEY NOT NULL,
@@ -27,24 +24,34 @@ export const initDatabase = () => {
             peso REAL NOT NULL,
             data TEXT NOT NULL
         );
+
+        CREATE TABLE IF NOT EXISTS pesos_usuario (
+            id TEXT PRIMARY KEY NOT NULL,
+            peso REAL NOT NULL,
+            data TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS perfil_usuario (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            altura REAL,
+            idade INTEGER
+        );
     `)
 
-    // Migracao: se o usuario ja tinha o banco com a versao antiga,
-    // adiciona as colunas series e repeticoes (ignora se ja existem)
+    // Garante que existe a linha unica do perfil
+    db.runSync("INSERT OR IGNORE INTO perfil_usuario (id, altura, idade) VALUES (1, NULL, NULL)")
+
+    // Migracoes antigas
     try {
         db.execSync(
             "ALTER TABLE ficha_exercicios ADD COLUMN series INTEGER NOT NULL DEFAULT 3"
         )
-    } catch (e) {
-        // coluna ja existe - tudo ok
-    }
+    } catch (e) {}
     try {
         db.execSync(
             "ALTER TABLE ficha_exercicios ADD COLUMN repeticoes INTEGER NOT NULL DEFAULT 10"
         )
-    } catch (e) {
-        // coluna ja existe - tudo ok
-    }
+    } catch (e) {}
 }
 
 export default db
