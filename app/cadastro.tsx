@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router } from "expo-router"
 import Input from "../src/components/Input"
-import Titulo from "../src/components/Titulo"
 
 export default function Cadastro() {
     return (
@@ -24,13 +23,15 @@ export default function Cadastro() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* LOGO GymNerds - PNG com fundo transparente */}
                     <Image
-                        source={require("../assets/icon.png")}
+                        source={require("../assets/logo.png")}
                         style={styles.logo}
                         resizeMode="contain"
                     />
 
-                    <Titulo texto="Cadastro" />
+                    {/* Subtitulo */}
+                    <Text style={styles.subtitulo}>Cadastro</Text>
 
                     <Input placeholder="Cadastre seu login" />
                     <Input placeholder="Cadastre sua senha" secureTextEntry />
@@ -48,13 +49,8 @@ export default function Cadastro() {
 }
 
 const styles = StyleSheet.create({
-    safe: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-    },
-    flex: {
-        flex: 1,
-    },
+    safe: { flex: 1, backgroundColor: "#0f0f14" },
+    flex: { flex: 1 },
     container: {
         flexGrow: 1,
         backgroundColor: "#0f0f14",
@@ -64,9 +60,17 @@ const styles = StyleSheet.create({
         paddingVertical: 24,
     },
     logo: {
-        width: 90,
-        height: 90,
+        width: 200,
+        height: 180,
         marginBottom: 4,
+    },
+    subtitulo: {
+        fontFamily: "Inter_600SemiBold",
+        color: "#aaaaaa",
+        fontSize: 18,
+        letterSpacing: 2,
+        textTransform: "uppercase",
+        marginBottom: 20,
     },
     botao: {
         backgroundColor: "#ffffff",

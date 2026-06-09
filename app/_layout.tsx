@@ -39,6 +39,7 @@ export default function Layout() {
                 />
                 <Stack.Screen name="registrarPR" options={{ title: "Registrar PR" }} />
                 <Stack.Screen name="grafico" options={{ title: "Evolução do PR" }} />
+                <Stack.Screen name="calendario" options={{ title: "Calendário de treinos" }} />
             </Stack>
         </SafeAreaProvider>
     )

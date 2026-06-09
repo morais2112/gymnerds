@@ -9,7 +9,6 @@ import {
 } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { router } from "expo-router"
-import Titulo from "../src/components/Titulo"
 import Input from "../src/components/Input"
 import Botaop from "../src/components/Botaop"
 
@@ -25,13 +24,15 @@ export default function Login() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* LOGO GymNerds - PNG com fundo transparente */}
                     <Image
-                        source={require("../assets/icon.png")}
+                        source={require("../assets/logo.png")}
                         style={styles.logo}
                         resizeMode="contain"
                     />
 
-                    <Titulo texto="Login" />
+                    {/* Subtitulo indicando a tela */}
+                    <Text style={styles.subtitulo}>Login</Text>
 
                     <Input placeholder="Digite seu login" />
                     <Input placeholder="Digite sua senha" secureTextEntry />
@@ -44,7 +45,7 @@ export default function Login() {
                     </TouchableOpacity>
 
                     <Botaop
-                        textop="Ainda nao se cadastrou? Clique aqui!"
+                        textop="Ainda não se cadastrou? Clique aqui!"
                         onPress={() => router.push("/cadastro")}
                     />
                 </ScrollView>
@@ -54,13 +55,8 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
-    safe: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-    },
-    flex: {
-        flex: 1,
-    },
+    safe: { flex: 1, backgroundColor: "#0f0f14" },
+    flex: { flex: 1 },
     container: {
         flexGrow: 1,
         backgroundColor: "#0f0f14",
@@ -70,9 +66,17 @@ const styles = StyleSheet.create({
         paddingVertical: 24,
     },
     logo: {
-        width: 100,
-        height: 100,
+        width: 220,
+        height: 200,
         marginBottom: 8,
+    },
+    subtitulo: {
+        fontFamily: "Inter_600SemiBold",
+        color: "#aaaaaa",
+        fontSize: 18,
+        letterSpacing: 2,
+        textTransform: "uppercase",
+        marginBottom: 20,
     },
     botaoEntrar: {
         backgroundColor: "#ffffff",

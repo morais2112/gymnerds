@@ -40,13 +40,11 @@ export type RegistroPeso = {
     data: string
 }
 
-// Perfil do usuario: altura (cm) e idade (anos)
 export type Perfil = {
     altura: number | null
     idade: number | null
 }
 
-// Classificacao do IMC
 export type ClassificacaoIMC =
     | "Abaixo do peso"
     | "Peso normal"
@@ -54,3 +52,12 @@ export type ClassificacaoIMC =
     | "Obesidade grau I"
     | "Obesidade grau II"
     | "Obesidade grau III"
+
+// Uma sessao de treino realizada
+export type SessaoTreino = {
+    id: string
+    idFicha: string
+    nomeFicha: string  // snapshot do nome no momento (se a ficha for apagada, ainda mostra)
+    data: string       // ISO
+    duracaoMin: number
+}

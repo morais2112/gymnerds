@@ -36,12 +36,18 @@ export const initDatabase = () => {
             altura REAL,
             idade INTEGER
         );
+
+        CREATE TABLE IF NOT EXISTS sessoes_treino (
+            id TEXT PRIMARY KEY NOT NULL,
+            id_ficha TEXT NOT NULL,
+            nome_ficha TEXT NOT NULL,
+            data TEXT NOT NULL,
+            duracao_min INTEGER NOT NULL DEFAULT 60
+        );
     `)
 
-    // Garante que existe a linha unica do perfil
     db.runSync("INSERT OR IGNORE INTO perfil_usuario (id, altura, idade) VALUES (1, NULL, NULL)")
 
-    // Migracoes antigas
     try {
         db.execSync(
             "ALTER TABLE ficha_exercicios ADD COLUMN series INTEGER NOT NULL DEFAULT 3"
