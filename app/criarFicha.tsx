@@ -21,18 +21,18 @@ import {
     subscribe,
 } from "../src/data/fichasStore"
 import { getPRAtual } from "../src/data/prsStore"
+import { useTheme } from "../src/theme/ThemeContext"
 
 export default function CriarFicha() {
     const params = useLocalSearchParams<{ idFicha?: string }>()
+    const { colors } = useTheme()
 
-    // useState para nome da ficha e lista de exercicios da ficha
     const [nomeFicha, setNomeFicha] = useState<string>("")
     const [exerciciosFicha, setExerciciosFicha] = useState<ExercicioFicha[]>([])
     const [idFichaAtual, setIdFichaAtual] = useState<string | null>(
         params.idFicha ?? null
     )
 
-    // useEffect com dependencia: carrega dados se a tela receber idFicha
     useEffect(() => {
         if (params.idFicha) {
             const f = getFichas().find((x) => x.id === params.idFicha)
@@ -44,7 +44,6 @@ export default function CriarFicha() {
         }
     }, [params.idFicha])
 
-    // useEffect com cleanup: re-carrega quando o store mudar
     useEffect(() => {
         const unsub = subscribe(() => {
             if (idFichaAtual) {
@@ -60,14 +59,12 @@ export default function CriarFicha() {
             Alert.alert("Atenção", "Digite um nome para a ficha primeiro.")
             return
         }
-
         let id = idFichaAtual
         if (!id) {
             id = String(Date.now())
             addFicha({ id, nome: nomeFicha.trim(), exercicios: exerciciosFicha })
             setIdFichaAtual(id)
         }
-
         router.push({
             pathname: "/selecionarExercicio",
             params: { idFicha: id },
@@ -92,39 +89,71 @@ export default function CriarFicha() {
     }
 
     return (
-        <SafeAreaView style={styles.safe} edges={["bottom"]}>
+        <SafeAreaView
+            style={[styles.safe, { backgroundColor: colors.background }]}
+            edges={["bottom"]}
+        >
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
-                <View style={styles.container}>
-                    <Text style={styles.label}>Nome da ficha</Text>
+                <View
+                    style={[styles.container, { backgroundColor: colors.background }]}
+                >
+                    <Text style={[styles.label, { color: colors.text }]}>
+                        Nome da ficha
+                    </Text>
                     <TextInput
-                        style={styles.input}
+                        style={[
+                            styles.input,
+                            { borderColor: colors.text, color: colors.text },
+                        ]}
                         placeholder="Ex: Treino A - Peito e Tríceps"
-                        placeholderTextColor="#777"
+                        placeholderTextColor={colors.textDim}
                         value={nomeFicha}
                         onChangeText={setNomeFicha}
                     />
 
                     <View style={styles.linhaBotoes}>
                         <TouchableOpacity
-                            style={styles.botaoSecundario}
+                            style={[
+                                styles.botaoSecundario,
+                                { borderColor: colors.text },
+                            ]}
                             onPress={adicionarExercicio}
                         >
-                            <Text style={styles.textoBotaoSecundario}>+ Exercício</Text>
+                            <Text
+                                style={[
+                                    styles.textoBotaoSecundario,
+                                    { color: colors.text },
+                                ]}
+                            >
+                                + Exercício
+                            </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.botaoSalvar} onPress={salvarFicha}>
-                            <Text style={styles.textoBotaoSalvar}>Salvar</Text>
+                        <TouchableOpacity
+                            style={[
+                                styles.botaoSalvar,
+                                { backgroundColor: colors.accent },
+                            ]}
+                            onPress={salvarFicha}
+                        >
+                            <Text
+                                style={[
+                                    styles.textoBotaoSalvar,
+                                    { color: colors.accentText },
+                                ]}
+                            >
+                                Salvar
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.subtitulo}>
+                    <Text style={[styles.subtitulo, { color: colors.text }]}>
                         Exercícios da ficha ({exerciciosFicha.length})
                     </Text>
 
-                    {/* FlatList com os exercicios + series, reps e PR */}
                     <FlatList
                         data={exerciciosFicha}
                         keyExtractor={(item) => item.exercicio.id}
@@ -136,7 +165,9 @@ export default function CriarFicha() {
                             />
                         )}
                         ListEmptyComponent={
-                            <Text style={styles.vazio}>
+                            <Text
+                                style={[styles.vazio, { color: colors.textMuted }]}
+                            >
                                 Nenhum exercício adicionado. Clique em "+ Exercício".
                             </Text>
                         }
@@ -149,28 +180,20 @@ export default function CriarFicha() {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#0f0f14" },
+    safe: { flex: 1 },
     flex: { flex: 1 },
-    container: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-        paddingHorizontal: 16,
-        paddingTop: 16,
-    },
+    container: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
     label: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 14,
         marginBottom: 6,
     },
     input: {
         fontFamily: "Inter_400Regular",
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 9,
         paddingHorizontal: 12,
         height: 44,
-        color: "#ffffff",
         marginBottom: 14,
         fontSize: 15,
     },
@@ -178,36 +201,26 @@ const styles = StyleSheet.create({
     botaoSecundario: {
         flex: 1,
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    textoBotaoSecundario: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-    },
+    textoBotaoSecundario: { fontFamily: "Inter_600SemiBold" },
     botaoSalvar: {
         flex: 1,
-        backgroundColor: "#ffffff",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    textoBotaoSalvar: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-    },
+    textoBotaoSalvar: { fontFamily: "Inter_600SemiBold" },
     subtitulo: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 16,
         marginBottom: 8,
         marginTop: 4,
     },
     vazio: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         textAlign: "center",
         marginTop: 24,
     },

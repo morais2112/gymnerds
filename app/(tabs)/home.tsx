@@ -28,15 +28,13 @@ import {
     getSessoes,
     subscribe as subSessoes,
 } from "../../src/data/sessaoStore"
-import {
-    calcularStreak,
-    calcularQtdSemana,
-} from "../../src/data/streakCalc"
+import { calcularStreak, calcularQtdSemana } from "../../src/data/streakCalc"
 import { exercicios } from "../../src/data/exercicios"
 import { labelArea } from "../../src/data/labelsArea"
 import BodySilhueta from "../../src/components/BodySilhueta"
 import MiniGrafico from "../../src/components/MiniGrafico"
 import ModalRegistrarTreino from "../../src/components/ModalRegistrarTreino"
+import { useTheme } from "../../src/theme/ThemeContext"
 
 type ExercicioComGrafico = {
     exercicio: Exercicio
@@ -46,6 +44,7 @@ type ExercicioComGrafico = {
 
 export default function Home() {
     const { width } = useWindowDimensions()
+    const { colors } = useTheme()
 
     const [fichas, setFichas] = useState<Ficha[]>(getFichas())
     const [graficos, setGraficos] = useState<ExercicioComGrafico[]>([])
@@ -69,7 +68,6 @@ export default function Home() {
         setGraficos(novos)
     }
 
-    // useEffect com cleanup multiplo - 4 stores simultaneos (Aula 4)
     useEffect(() => {
         recarregarGraficos()
         const unsubF = subFichas(() => setFichas([...getFichas()]))
@@ -95,79 +93,145 @@ export default function Home() {
         .sort((a, b) => a.data.localeCompare(b.data))
         .map((r) => r.peso)
 
-    // Calculos de streak (Aula 4 - derivados)
     const streak = calcularStreak(sessoes)
     const qtdSemana = calcularQtdSemana(sessoes)
+
+    // Estilos derivados do tema
+    const cardStyle = { backgroundColor: colors.surface, borderColor: colors.border }
+    const iconeBoxStyle = { backgroundColor: colors.surfaceAlt }
 
     return (
         <>
             <ScrollView
-                style={styles.container}
-                contentContainerStyle={[styles.scrollContent, { paddingHorizontal: paddingH }]}
+                style={{ flex: 1, backgroundColor: colors.background }}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingHorizontal: paddingH },
+                ]}
                 showsVerticalScrollIndicator={false}
             >
-                <Text style={styles.saudacao}>Bem-vindo de volta!</Text>
-                <Text style={styles.subtitulo}>
+                <Text style={[styles.saudacao, { color: colors.text }]}>
+                    Bem-vindo de volta!
+                </Text>
+                <Text style={[styles.subtitulo, { color: colors.textMuted }]}>
                     Você tem {fichas.length} ficha(s) cadastrada(s)
                 </Text>
 
-                {/* CARD STREAK - novo! */}
+                {/* CARD STREAK */}
                 <TouchableOpacity
-                    style={styles.cardStreak}
+                    style={[styles.cardStreak, cardStyle]}
                     onPress={() => router.push("/calendario")}
                 >
-                    <View style={styles.streakIcone}>
-                        <Ionicons name="flame" size={28} color="#ff6d4d" />
+                    <View style={[styles.streakIcone, iconeBoxStyle]}>
+                        <Ionicons name="flame" size={28} color={colors.fire} />
                     </View>
                     <View style={styles.streakInfo}>
                         <View style={styles.streakLinha}>
-                            <Text style={styles.streakValor}>{streak}</Text>
-                            <Text style={styles.streakLabel}>
+                            <Text
+                                style={[styles.streakValor, { color: colors.text }]}
+                            >
+                                {streak}
+                            </Text>
+                            <Text
+                                style={[styles.streakLabel, { color: colors.textMuted }]}
+                            >
                                 {streak === 1 ? "dia seguido" : "dias seguidos"}
                             </Text>
                         </View>
-                        <Text style={styles.streakSub}>
+                        <Text style={[styles.streakSub, { color: colors.textMuted }]}>
                             {qtdSemana} treino(s) esta semana
                         </Text>
                     </View>
-                    <Ionicons name="chevron-forward" size={18} color="#aaaaaa" />
+                    <Ionicons
+                        name="chevron-forward"
+                        size={18}
+                        color={colors.textMuted}
+                    />
                 </TouchableOpacity>
 
-                {/* Botao destacado: REGISTRAR TREINO */}
+                {/* Botao: TREINEI HOJE */}
                 <TouchableOpacity
-                    style={styles.botaoRegistrarTreino}
+                    style={[
+                        styles.botaoRegistrarTreino,
+                        { backgroundColor: colors.success },
+                    ]}
                     onPress={() => setModalAberto(true)}
                 >
-                    <Ionicons name="checkmark-circle-outline" size={22} color="#000000" />
-                    <Text style={styles.botaoRegistrarTreinoTexto}>
+                    <Ionicons
+                        name="checkmark-circle-outline"
+                        size={22}
+                        color={colors.textInverse}
+                    />
+                    <Text
+                        style={[
+                            styles.botaoRegistrarTreinoTexto,
+                            { color: colors.textInverse },
+                        ]}
+                    >
                         Treinei hoje!
                     </Text>
                 </TouchableOpacity>
 
                 {/* CARD MEU PESO */}
                 <TouchableOpacity
-                    style={styles.cardPeso}
+                    style={[styles.cardPeso, cardStyle]}
                     onPress={() => router.push("/meusDados")}
                 >
                     <View style={styles.cardPesoEsquerda}>
-                        <Ionicons name="scale-outline" size={26} color="#ffffff" />
+                        <Ionicons
+                            name="scale-outline"
+                            size={26}
+                            color={colors.text}
+                        />
                         <View>
-                            <Text style={styles.cardPesoLabel}>Meu peso</Text>
+                            <Text
+                                style={[
+                                    styles.cardPesoLabel,
+                                    { color: colors.textMuted },
+                                ]}
+                            >
+                                Meu peso
+                            </Text>
                             <View style={styles.cardPesoLinha}>
-                                <Text style={styles.cardPesoValor}>
-                                    {pesoAtual !== null ? pesoAtual + " kg" : "Sem registro"}
+                                <Text
+                                    style={[
+                                        styles.cardPesoValor,
+                                        { color: colors.text },
+                                    ]}
+                                >
+                                    {pesoAtual !== null
+                                        ? pesoAtual + " kg"
+                                        : "Sem registro"}
                                 </Text>
                                 {variacaoPeso !== null && variacaoPeso !== 0 && (
-                                    <View style={styles.cardPesoVariacao}>
+                                    <View
+                                        style={[
+                                            styles.cardPesoVariacao,
+                                            { backgroundColor: colors.surfaceAlt },
+                                        ]}
+                                    >
                                         <Ionicons
-                                            name={variacaoPeso > 0 ? "trending-up" : "trending-down"}
+                                            name={
+                                                variacaoPeso > 0
+                                                    ? "trending-up"
+                                                    : "trending-down"
+                                            }
                                             size={12}
-                                            color={variacaoPeso > 0 ? "#ff9d4d" : "#4dff9d"}
+                                            color={
+                                                variacaoPeso > 0
+                                                    ? colors.warning
+                                                    : colors.success
+                                            }
                                         />
                                         <Text
                                             style={[
                                                 styles.cardPesoVariacaoTexto,
-                                                { color: variacaoPeso > 0 ? "#ff9d4d" : "#4dff9d" },
+                                                {
+                                                    color:
+                                                        variacaoPeso > 0
+                                                            ? colors.warning
+                                                            : colors.success,
+                                                },
                                             ]}
                                         >
                                             {variacaoPeso > 0 ? "+" : ""}
@@ -179,16 +243,29 @@ export default function Home() {
                         </View>
                     </View>
                     {valoresPeso.length > 0 && (
-                        <MiniGrafico valores={valoresPeso} largura={100} altura={40} />
+                        <MiniGrafico
+                            valores={valoresPeso}
+                            largura={100}
+                            altura={40}
+                            cor={colors.text}
+                        />
                     )}
-                    <Ionicons name="chevron-forward" size={18} color="#aaaaaa" />
+                    <Ionicons
+                        name="chevron-forward"
+                        size={18}
+                        color={colors.textMuted}
+                    />
                 </TouchableOpacity>
 
-                {/* SECAO: SUAS FICHAS */}
+                {/* SECAO FICHAS */}
                 <View style={styles.linhaSection}>
-                    <Text style={styles.section}>Suas fichas</Text>
+                    <Text style={[styles.section, { color: colors.text }]}>
+                        Suas fichas
+                    </Text>
                     <TouchableOpacity onPress={() => router.push("/fichas")}>
-                        <Text style={styles.verTodas}>Ver todas</Text>
+                        <Text style={[styles.verTodas, { color: colors.textMuted }]}>
+                            Ver todas
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -200,7 +277,11 @@ export default function Home() {
                     contentContainerStyle={styles.listaCards}
                     renderItem={({ item }) => (
                         <TouchableOpacity
-                            style={[styles.cardFicha, { width: cardWidth }]}
+                            style={[
+                                styles.cardFicha,
+                                cardStyle,
+                                { width: cardWidth },
+                            ]}
                             onPress={() =>
                                 router.push({
                                     pathname: "/criarFicha",
@@ -208,31 +289,69 @@ export default function Home() {
                                 })
                             }
                         >
-                            <Ionicons name="clipboard" size={24} color="#ffffff" />
-                            <Text style={styles.cardNome} numberOfLines={2}>
+                            <Ionicons
+                                name="clipboard"
+                                size={24}
+                                color={colors.text}
+                            />
+                            <Text
+                                style={[styles.cardNome, { color: colors.text }]}
+                                numberOfLines={2}
+                            >
                                 {item.nome}
                             </Text>
-                            <Text style={styles.cardQtd}>{item.exercicios.length} ex.</Text>
+                            <Text
+                                style={[styles.cardQtd, { color: colors.textMuted }]}
+                            >
+                                {item.exercicios.length} ex.
+                            </Text>
                         </TouchableOpacity>
                     )}
                     ListEmptyComponent={
-                        <View style={[styles.cardVazio, { width: cardWidth * 1.4 }]}>
-                            <Text style={styles.cardVazioTexto}>Sem fichas ainda</Text>
+                        <View
+                            style={[
+                                styles.cardVazio,
+                                cardStyle,
+                                { width: cardWidth * 1.4 },
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.cardVazioTexto,
+                                    { color: colors.textMuted },
+                                ]}
+                            >
+                                Sem fichas ainda
+                            </Text>
                             <TouchableOpacity
-                                style={styles.botaoCriar}
+                                style={[
+                                    styles.botaoCriar,
+                                    { backgroundColor: colors.accent },
+                                ]}
                                 onPress={() => router.push("/criarFicha")}
                             >
-                                <Text style={styles.botaoCriarTexto}>+ Criar</Text>
+                                <Text
+                                    style={[
+                                        styles.botaoCriarTexto,
+                                        { color: colors.accentText },
+                                    ]}
+                                >
+                                    + Criar
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     }
                 />
 
-                {/* SECAO: SEUS GRAFICOS */}
+                {/* SECAO GRAFICOS */}
                 <View style={styles.linhaSection}>
-                    <Text style={styles.section}>Seus gráficos</Text>
+                    <Text style={[styles.section, { color: colors.text }]}>
+                        Seus gráficos
+                    </Text>
                     <TouchableOpacity onPress={() => router.push("/grafico")}>
-                        <Text style={styles.verTodas}>Ver todos</Text>
+                        <Text style={[styles.verTodas, { color: colors.textMuted }]}>
+                            Ver todos
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -244,7 +363,11 @@ export default function Home() {
                     contentContainerStyle={styles.listaCards}
                     renderItem={({ item }) => (
                         <TouchableOpacity
-                            style={[styles.cardGrafico, { width: cardWidth * 1.15 }]}
+                            style={[
+                                styles.cardGrafico,
+                                cardStyle,
+                                { width: cardWidth * 1.15 },
+                            ]}
                             onPress={() =>
                                 router.push({
                                     pathname: "/grafico",
@@ -253,12 +376,28 @@ export default function Home() {
                             }
                         >
                             <View style={styles.cardGraficoHeader}>
-                                <BodySilhueta area={item.exercicio.area} size={24} />
+                                <BodySilhueta
+                                    area={item.exercicio.area}
+                                    size={24}
+                                    cor={colors.text}
+                                    corBase={colors.textDim}
+                                />
                                 <View style={styles.cardGraficoInfo}>
-                                    <Text style={styles.cardNome} numberOfLines={1}>
+                                    <Text
+                                        style={[
+                                            styles.cardNome,
+                                            { color: colors.text },
+                                        ]}
+                                        numberOfLines={1}
+                                    >
                                         {item.exercicio.nome}
                                     </Text>
-                                    <Text style={styles.cardQtd}>
+                                    <Text
+                                        style={[
+                                            styles.cardQtd,
+                                            { color: colors.textMuted },
+                                        ]}
+                                    >
                                         {labelArea(item.exercicio.area)}
                                     </Text>
                                 </View>
@@ -267,62 +406,129 @@ export default function Home() {
                                 valores={item.valores}
                                 largura={cardWidth * 1.15 - 28}
                                 altura={40}
+                                cor={colors.text}
                             />
                             <View style={styles.cardGraficoRodape}>
-                                <Text style={styles.cardGraficoPR}>
-                                    {item.prAtual !== null ? item.prAtual + " kg" : "—"}
+                                <Text
+                                    style={[
+                                        styles.cardGraficoPR,
+                                        { color: colors.text },
+                                    ]}
+                                >
+                                    {item.prAtual !== null
+                                        ? item.prAtual + " kg"
+                                        : "—"}
                                 </Text>
-                                <Text style={styles.cardGraficoLabel}>PR</Text>
+                                <Text
+                                    style={[
+                                        styles.cardGraficoLabel,
+                                        { color: colors.textMuted },
+                                    ]}
+                                >
+                                    PR
+                                </Text>
                             </View>
                         </TouchableOpacity>
                     )}
                     ListEmptyComponent={
-                        <View style={[styles.cardVazio, { width: cardWidth * 1.4 }]}>
-                            <Ionicons name="stats-chart-outline" size={22} color="#aaaaaa" />
-                            <Text style={styles.cardVazioTexto}>Sem PRs registrados</Text>
+                        <View
+                            style={[
+                                styles.cardVazio,
+                                cardStyle,
+                                { width: cardWidth * 1.4 },
+                            ]}
+                        >
+                            <Ionicons
+                                name="stats-chart-outline"
+                                size={22}
+                                color={colors.textMuted}
+                            />
+                            <Text
+                                style={[
+                                    styles.cardVazioTexto,
+                                    { color: colors.textMuted },
+                                ]}
+                            >
+                                Sem PRs registrados
+                            </Text>
                             <TouchableOpacity
-                                style={styles.botaoCriar}
+                                style={[
+                                    styles.botaoCriar,
+                                    { backgroundColor: colors.accent },
+                                ]}
                                 onPress={() => router.push("/exercicios")}
                             >
-                                <Text style={styles.botaoCriarTexto}>Registrar</Text>
+                                <Text
+                                    style={[
+                                        styles.botaoCriarTexto,
+                                        { color: colors.accentText },
+                                    ]}
+                                >
+                                    Registrar
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     }
                 />
 
-                {/* SECAO: ACOES RAPIDAS */}
+                {/* SECAO ACOES */}
                 <View style={styles.linhaSection}>
-                    <Text style={styles.section}>Ações rápidas</Text>
+                    <Text style={[styles.section, { color: colors.text }]}>
+                        Ações rápidas
+                    </Text>
                 </View>
 
                 <View style={styles.acoesRapidas}>
                     <TouchableOpacity
-                        style={styles.botaoAcao}
+                        style={[styles.botaoAcao, cardStyle]}
                         onPress={() => router.push("/criarFicha")}
                     >
-                        <Ionicons name="add-circle-outline" size={26} color="#ffffff" />
-                        <Text style={styles.botaoAcaoTexto}>Nova ficha</Text>
+                        <Ionicons
+                            name="add-circle-outline"
+                            size={26}
+                            color={colors.text}
+                        />
+                        <Text
+                            style={[styles.botaoAcaoTexto, { color: colors.text }]}
+                        >
+                            Nova ficha
+                        </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={styles.botaoAcao}
+                        style={[styles.botaoAcao, cardStyle]}
                         onPress={() => router.push("/calendario")}
                     >
-                        <Ionicons name="calendar-outline" size={26} color="#ffffff" />
-                        <Text style={styles.botaoAcaoTexto}>Calendário</Text>
+                        <Ionicons
+                            name="calendar-outline"
+                            size={26}
+                            color={colors.text}
+                        />
+                        <Text
+                            style={[styles.botaoAcaoTexto, { color: colors.text }]}
+                        >
+                            Calendário
+                        </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={styles.botaoAcao}
+                        style={[styles.botaoAcao, cardStyle]}
                         onPress={() => router.push("/grafico")}
                     >
-                        <Ionicons name="stats-chart-outline" size={26} color="#ffffff" />
-                        <Text style={styles.botaoAcaoTexto}>Gráficos</Text>
+                        <Ionicons
+                            name="stats-chart-outline"
+                            size={26}
+                            color={colors.text}
+                        />
+                        <Text
+                            style={[styles.botaoAcaoTexto, { color: colors.text }]}
+                        >
+                            Gráficos
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
 
-            {/* Modal pra registrar treino */}
             <ModalRegistrarTreino
                 visivel={modalAberto}
                 onFechar={() => setModalAberto(false)}
@@ -332,18 +538,14 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#0f0f14" },
     scrollContent: { paddingTop: 16, paddingBottom: 24 },
-    saudacao: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 22 },
+    saudacao: { fontFamily: "Inter_600SemiBold", fontSize: 22 },
     subtitulo: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         fontSize: 13,
         marginTop: 2,
     },
     cardStreak: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 14,
@@ -356,30 +558,15 @@ const styles = StyleSheet.create({
         width: 44,
         height: 44,
         borderRadius: 12,
-        backgroundColor: "#2a2a35",
         alignItems: "center",
         justifyContent: "center",
     },
     streakInfo: { flex: 1 },
     streakLinha: { flexDirection: "row", alignItems: "baseline", gap: 6 },
-    streakValor: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 26,
-    },
-    streakLabel: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 13,
-    },
-    streakSub: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-        marginTop: 2,
-    },
+    streakValor: { fontFamily: "Inter_600SemiBold", fontSize: 26 },
+    streakLabel: { fontFamily: "Inter_400Regular", fontSize: 13 },
+    streakSub: { fontFamily: "Inter_400Regular", fontSize: 12, marginTop: 2 },
     botaoRegistrarTreino: {
-        backgroundColor: "#4dff9d",
         borderRadius: 12,
         padding: 14,
         marginTop: 12,
@@ -390,12 +577,9 @@ const styles = StyleSheet.create({
     },
     botaoRegistrarTreinoTexto: {
         fontFamily: "Inter_600SemiBold",
-        color: "#000000",
         fontSize: 15,
     },
     cardPeso: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 14,
@@ -410,30 +594,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 12,
     },
-    cardPesoLabel: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-    },
+    cardPesoLabel: { fontFamily: "Inter_400Regular", fontSize: 12 },
     cardPesoLinha: { flexDirection: "row", alignItems: "center", gap: 8 },
-    cardPesoValor: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 18,
-    },
+    cardPesoValor: { fontFamily: "Inter_600SemiBold", fontSize: 18 },
     cardPesoVariacao: {
         flexDirection: "row",
         alignItems: "center",
         gap: 2,
-        backgroundColor: "#2a2a35",
         paddingHorizontal: 6,
         paddingVertical: 3,
         borderRadius: 6,
     },
-    cardPesoVariacaoTexto: {
-        fontFamily: "Inter_600SemiBold",
-        fontSize: 11,
-    },
+    cardPesoVariacaoTexto: { fontFamily: "Inter_600SemiBold", fontSize: 11 },
     linhaSection: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -441,12 +613,10 @@ const styles = StyleSheet.create({
         marginTop: 24,
         marginBottom: 8,
     },
-    section: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
-    verTodas: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 13 },
+    section: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    verTodas: { fontFamily: "Inter_400Regular", fontSize: 13 },
     listaCards: { gap: 12, paddingVertical: 4, paddingRight: 4 },
     cardFicha: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 14,
@@ -454,8 +624,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     cardGrafico: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 12,
@@ -464,26 +632,16 @@ const styles = StyleSheet.create({
     },
     cardGraficoHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
     cardGraficoInfo: { flex: 1 },
-    cardGraficoRodape: { flexDirection: "row", alignItems: "baseline", gap: 4 },
-    cardGraficoPR: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
+    cardGraficoRodape: {
+        flexDirection: "row",
+        alignItems: "baseline",
+        gap: 4,
     },
-    cardGraficoLabel: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 11,
-    },
-    cardNome: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 13,
-    },
-    cardQtd: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 11 },
+    cardGraficoPR: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    cardGraficoLabel: { fontFamily: "Inter_400Regular", fontSize: 11 },
+    cardNome: { fontFamily: "Inter_600SemiBold", fontSize: 13 },
+    cardQtd: { fontFamily: "Inter_400Regular", fontSize: 11 },
     cardVazio: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 14,
@@ -492,27 +650,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         gap: 6,
     },
-    cardVazioTexto: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 13,
-    },
+    cardVazioTexto: { fontFamily: "Inter_400Regular", fontSize: 13 },
     botaoCriar: {
-        backgroundColor: "#ffffff",
         paddingHorizontal: 16,
         paddingVertical: 8,
         borderRadius: 8,
     },
-    botaoCriarTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-        fontSize: 13,
-    },
+    botaoCriarTexto: { fontFamily: "Inter_600SemiBold", fontSize: 13 },
     acoesRapidas: { flexDirection: "row", gap: 8 },
     botaoAcao: {
         flex: 1,
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 12,
@@ -521,7 +668,6 @@ const styles = StyleSheet.create({
     },
     botaoAcaoTexto: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 11,
         textAlign: "center",
     },

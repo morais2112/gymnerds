@@ -1,17 +1,26 @@
 import { TextInput, StyleSheet, TextInputProps } from "react-native"
+import { useTheme } from "../theme/ThemeContext"
 
-// Props tipadas - aceita tudo que o TextInput aceita + nossas props extras
 type InputProps = TextInputProps & {
     placeholder: string
     secureTextEntry?: boolean
 }
 
 const Input = (props: InputProps) => {
+    const { colors } = useTheme()
+
     return (
         <TextInput
             {...props}
-            placeholderTextColor="#777"
-            style={[styles.input, props.style]}
+            placeholderTextColor={colors.textDim}
+            style={[
+                styles.input,
+                {
+                    borderColor: colors.text,
+                    color: colors.text,
+                },
+                props.style,
+            ]}
         />
     )
 }
@@ -25,11 +34,9 @@ const styles = StyleSheet.create({
         maxWidth: 420,
         height: 44,
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 9,
         paddingHorizontal: 12,
         fontSize: 16,
         marginBottom: 12,
-        color: "#ffffff",
     },
 })

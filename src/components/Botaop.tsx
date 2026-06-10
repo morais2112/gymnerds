@@ -1,4 +1,5 @@
 import { Text, TouchableOpacity, StyleSheet } from "react-native"
+import { useTheme } from "../theme/ThemeContext"
 
 type BotaopProps = {
     textop: string
@@ -6,9 +7,14 @@ type BotaopProps = {
 }
 
 const Botaop = (props: BotaopProps) => {
+    const { colors } = useTheme()
+
     return (
-        <TouchableOpacity onPress={props.onPress} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text style={styles.botao}>{props.textop}</Text>
+        <TouchableOpacity
+            onPress={props.onPress}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+            <Text style={[styles.botao, { color: colors.text }]}>{props.textop}</Text>
         </TouchableOpacity>
     )
 }
@@ -19,7 +25,6 @@ const styles = StyleSheet.create({
     botao: {
         fontFamily: "Inter_400Regular",
         textAlign: "center",
-        color: "#fcfcfc",
         margin: 20,
         fontSize: 14,
         textDecorationLine: "underline",

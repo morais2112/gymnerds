@@ -24,9 +24,11 @@ import {
     removeRegistro,
     subscribe,
 } from "../src/data/prsStore"
+import { useTheme } from "../src/theme/ThemeContext"
 
 export default function RegistrarPR() {
     const params = useLocalSearchParams<{ exercicioId?: string }>()
+    const { colors } = useTheme()
 
     const [peso, setPeso] = useState<string>("")
     const [registros, setRegistros] = useState<RegistroPR[]>(
@@ -52,76 +54,141 @@ export default function RegistrarPR() {
         if (!params.exercicioId) return
         const valor = parseFloat(peso.replace(",", "."))
         if (isNaN(valor) || valor <= 0) {
-            Alert.alert("Atencao", "Digite um peso valido (maior que zero).")
+            Alert.alert("Atenção", "Digite um peso válido (maior que zero).")
             return
         }
-        const novo: RegistroPR = {
+        addRegistro({
             id: String(Date.now()),
             exercicioId: params.exercicioId,
             peso: valor,
             data: new Date().toISOString(),
-        }
-        addRegistro(novo)
+        })
         setPeso("")
     }
 
     const formatarData = (iso: string): string => {
         const d = new Date(iso)
-        const dia = String(d.getDate()).padStart(2, "0")
-        const mes = String(d.getMonth() + 1).padStart(2, "0")
-        const ano = d.getFullYear()
-        return dia + "/" + mes + "/" + ano
+        return (
+            String(d.getDate()).padStart(2, "0") +
+            "/" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "/" +
+            d.getFullYear()
+        )
     }
 
     if (!exercicio) {
         return (
-            <SafeAreaView style={styles.safe}>
-                <Text style={styles.erro}>Exercicio nao encontrado.</Text>
-                <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
-                    <Text style={styles.textoBotaoVoltar}>Voltar</Text>
+            <SafeAreaView
+                style={[styles.safe, { backgroundColor: colors.background }]}
+            >
+                <Text style={[styles.erro, { color: colors.text }]}>
+                    Exercício não encontrado.
+                </Text>
+                <TouchableOpacity
+                    style={[
+                        styles.botaoVoltar,
+                        { backgroundColor: colors.accent },
+                    ]}
+                    onPress={() => router.back()}
+                >
+                    <Text
+                        style={[
+                            styles.textoBotaoVoltar,
+                            { color: colors.accentText },
+                        ]}
+                    >
+                        Voltar
+                    </Text>
                 </TouchableOpacity>
             </SafeAreaView>
         )
     }
 
     return (
-        <SafeAreaView style={styles.safe} edges={["bottom"]}>
+        <SafeAreaView
+            style={[styles.safe, { backgroundColor: colors.background }]}
+            edges={["bottom"]}
+        >
             <KeyboardAvoidingView
                 style={styles.flex}
                 behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
                 <View style={styles.container}>
-                    <View style={styles.headerCard}>
-                        <BodySilhueta area={exercicio.area} size={48} />
+                    <View
+                        style={[
+                            styles.headerCard,
+                            { backgroundColor: colors.surface, borderColor: colors.border },
+                        ]}
+                    >
+                        <BodySilhueta
+                            area={exercicio.area}
+                            size={48}
+                            cor={colors.text}
+                            corBase={colors.textDim}
+                        />
                         <View style={styles.headerInfo}>
-                            <Text style={styles.exNome}>{exercicio.nome}</Text>
-                            <Text style={styles.exArea}>{labelArea(exercicio.area)}</Text>
+                            <Text style={[styles.exNome, { color: colors.text }]}>
+                                {exercicio.nome}
+                            </Text>
+                            <Text style={[styles.exArea, { color: colors.textMuted }]}>
+                                {labelArea(exercicio.area)}
+                            </Text>
                         </View>
                         <View style={styles.prAtualBox}>
-                            <Text style={styles.prAtualLabel}>PR atual</Text>
-                            <Text style={styles.prAtualValor}>
+                            <Text
+                                style={[
+                                    styles.prAtualLabel,
+                                    { color: colors.textMuted },
+                                ]}
+                            >
+                                PR atual
+                            </Text>
+                            <Text
+                                style={[styles.prAtualValor, { color: colors.text }]}
+                            >
                                 {prAtual !== null ? prAtual + " kg" : "-"}
                             </Text>
                         </View>
                     </View>
 
-                    <Text style={styles.label}>Novo registro (kg)</Text>
+                    <Text style={[styles.label, { color: colors.text }]}>
+                        Novo registro (kg)
+                    </Text>
                     <View style={styles.linhaInput}>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                { borderColor: colors.text, color: colors.text },
+                            ]}
                             placeholder="Ex: 80"
-                            placeholderTextColor="#777"
+                            placeholderTextColor={colors.textDim}
                             keyboardType="numeric"
                             value={peso}
                             onChangeText={setPeso}
                         />
-                        <TouchableOpacity style={styles.botaoSalvar} onPress={salvar}>
-                            <Text style={styles.textoSalvar}>Salvar</Text>
+                        <TouchableOpacity
+                            style={[
+                                styles.botaoSalvar,
+                                { backgroundColor: colors.accent },
+                            ]}
+                            onPress={salvar}
+                        >
+                            <Text
+                                style={[
+                                    styles.textoSalvar,
+                                    { color: colors.accentText },
+                                ]}
+                            >
+                                Salvar
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.linhaHistorico}>
-                        <Text style={styles.subtitulo}>Historico ({registros.length})</Text>
+                        <Text style={[styles.subtitulo, { color: colors.text }]}>
+                            Histórico ({registros.length})
+                        </Text>
                         {registros.length > 0 && (
                             <TouchableOpacity
                                 onPress={() =>
@@ -130,10 +197,24 @@ export default function RegistrarPR() {
                                         params: { exercicioId: exercicio.id },
                                     })
                                 }
-                                style={styles.botaoGrafico}
+                                style={[
+                                    styles.botaoGrafico,
+                                    { backgroundColor: colors.accent },
+                                ]}
                             >
-                                <Ionicons name="trending-up" size={14} color="#000000" />
-                                <Text style={styles.botaoGraficoTexto}>Ver grafico</Text>
+                                <Ionicons
+                                    name="trending-up"
+                                    size={14}
+                                    color={colors.accentText}
+                                />
+                                <Text
+                                    style={[
+                                        styles.botaoGraficoTexto,
+                                        { color: colors.accentText },
+                                    ]}
+                                >
+                                    Ver gráfico
+                                </Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -142,21 +223,44 @@ export default function RegistrarPR() {
                         data={registros}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (
-                            <View style={styles.cardRegistro}>
+                            <View
+                                style={[
+                                    styles.cardRegistro,
+                                    {
+                                        backgroundColor: colors.surface,
+                                        borderColor: colors.border,
+                                    },
+                                ]}
+                            >
                                 <View>
-                                    <Text style={styles.regPeso}>{item.peso} kg</Text>
-                                    <Text style={styles.regData}>{formatarData(item.data)}</Text>
+                                    <Text
+                                        style={[styles.regPeso, { color: colors.text }]}
+                                    >
+                                        {item.peso} kg
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.regData,
+                                            { color: colors.textMuted },
+                                        ]}
+                                    >
+                                        {formatarData(item.data)}
+                                    </Text>
                                 </View>
                                 <TouchableOpacity
                                     onPress={() => removeRegistro(item.id)}
                                     style={styles.botaoRemover}
                                 >
-                                    <Ionicons name="trash-outline" size={20} color="#ff4d4d" />
+                                    <Ionicons
+                                        name="trash-outline"
+                                        size={20}
+                                        color={colors.danger}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         )}
                         ListEmptyComponent={
-                            <Text style={styles.vazio}>
+                            <Text style={[styles.vazio, { color: colors.textMuted }]}>
                                 Nenhum registro ainda. Adicione o primeiro acima.
                             </Text>
                         }
@@ -169,12 +273,10 @@ export default function RegistrarPR() {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: "#0f0f14" },
+    safe: { flex: 1 },
     flex: { flex: 1 },
     container: { flex: 1, paddingHorizontal: 16, paddingTop: 16 },
     headerCard: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 12,
         padding: 14,
@@ -184,32 +286,33 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
     headerInfo: { flex: 1 },
-    exNome: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
-    exArea: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12, marginTop: 2 },
+    exNome: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    exArea: { fontFamily: "Inter_400Regular", fontSize: 12, marginTop: 2 },
     prAtualBox: { alignItems: "flex-end" },
-    prAtualLabel: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 11 },
-    prAtualValor: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 18 },
-    label: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 14, marginBottom: 6 },
+    prAtualLabel: { fontFamily: "Inter_400Regular", fontSize: 11 },
+    prAtualValor: { fontFamily: "Inter_600SemiBold", fontSize: 18 },
+    label: {
+        fontFamily: "Inter_600SemiBold",
+        fontSize: 14,
+        marginBottom: 6,
+    },
     linhaInput: { flexDirection: "row", gap: 10, marginBottom: 18 },
     input: {
         flex: 1,
         fontFamily: "Inter_400Regular",
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 9,
         paddingHorizontal: 12,
         height: 44,
-        color: "#ffffff",
         fontSize: 15,
     },
     botaoSalvar: {
-        backgroundColor: "#ffffff",
         paddingHorizontal: 18,
         justifyContent: "center",
         borderRadius: 10,
     },
-    textoSalvar: { fontFamily: "Inter_600SemiBold", color: "#000000" },
-    subtitulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
+    textoSalvar: { fontFamily: "Inter_600SemiBold" },
+    subtitulo: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
     linhaHistorico: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -220,19 +323,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 4,
-        backgroundColor: "#ffffff",
         paddingHorizontal: 10,
         paddingVertical: 6,
         borderRadius: 8,
     },
-    botaoGraficoTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-        fontSize: 12,
-    },
+    botaoGraficoTexto: { fontFamily: "Inter_600SemiBold", fontSize: 12 },
     cardRegistro: {
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 10,
         padding: 12,
@@ -241,19 +337,26 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    regPeso: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 16 },
-    regData: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12, marginTop: 2 },
+    regPeso: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    regData: { fontFamily: "Inter_400Regular", fontSize: 12, marginTop: 2 },
     botaoRemover: { padding: 6 },
-    vazio: { fontFamily: "Inter_400Regular", color: "#aaaaaa", textAlign: "center", marginTop: 24 },
+    vazio: {
+        fontFamily: "Inter_400Regular",
+        textAlign: "center",
+        marginTop: 24,
+    },
     listaConteudo: { paddingBottom: 16 },
-    erro: { fontFamily: "Inter_400Regular", color: "#ffffff", textAlign: "center", marginTop: 40 },
+    erro: {
+        fontFamily: "Inter_400Regular",
+        textAlign: "center",
+        marginTop: 40,
+    },
     botaoVoltar: {
-        backgroundColor: "#ffffff",
         marginTop: 16,
         marginHorizontal: 60,
         paddingVertical: 12,
         borderRadius: 10,
         alignItems: "center",
     },
-    textoBotaoVoltar: { fontFamily: "Inter_600SemiBold", color: "#000000" },
+    textoBotaoVoltar: { fontFamily: "Inter_600SemiBold" },
 })

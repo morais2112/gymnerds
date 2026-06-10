@@ -5,28 +5,24 @@ import { View } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { StatusBar } from "expo-status-bar"
 import { initDatabase } from "../src/database/db"
+import { ThemeProvider, useTheme } from "../src/theme/ThemeContext"
 
-export default function Layout() {
-    const [fontsLoaded] = useFonts({
-        Inter_400Regular,
-        Inter_600SemiBold,
-    })
-
-    useEffect(() => {
-        initDatabase()
-    }, [])
-
-    if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: "#0f0f14" }} />
+// Componente interno que tem acesso ao tema (precisa estar dentro do Provider)
+function LayoutInterno() {
+    const { mode, colors } = useTheme()
 
     return (
-        <SafeAreaProvider>
-            <StatusBar style="light" backgroundColor="#0f0f14" />
+        <>
+            <StatusBar
+                style={mode === "dark" ? "light" : "dark"}
+                backgroundColor={colors.background}
+            />
             <Stack
                 screenOptions={{
-                    headerStyle: { backgroundColor: "#0f0f14" },
-                    headerTintColor: "#ffffff",
+                    headerStyle: { backgroundColor: colors.background },
+                    headerTintColor: colors.text,
                     headerTitleStyle: { fontFamily: "Inter_600SemiBold" },
-                    contentStyle: { backgroundColor: "#0f0f14" },
+                    contentStyle: { backgroundColor: colors.background },
                 }}
             >
                 <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -41,6 +37,28 @@ export default function Layout() {
                 <Stack.Screen name="grafico" options={{ title: "Evolução do PR" }} />
                 <Stack.Screen name="calendario" options={{ title: "Calendário de treinos" }} />
             </Stack>
+        </>
+    )
+}
+
+export default function Layout() {
+    const [fontsLoaded] = useFonts({
+        Inter_400Regular,
+        Inter_600SemiBold,
+    })
+
+    // useEffect com array vazio - inicializa o SQLite uma vez na montagem
+    useEffect(() => {
+        initDatabase()
+    }, [])
+
+    if (!fontsLoaded) return <View style={{ flex: 1, backgroundColor: "#0f0f14" }} />
+
+    return (
+        <SafeAreaProvider>
+            <ThemeProvider>
+                <LayoutInterno />
+            </ThemeProvider>
         </SafeAreaProvider>
     )
 }

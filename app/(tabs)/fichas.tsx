@@ -11,11 +11,12 @@ import { router } from "expo-router"
 import CardFicha from "../../src/components/CardFicha"
 import { Ficha } from "../../src/types"
 import { getFichas, removeFicha, subscribe } from "../../src/data/fichasStore"
+import { useTheme } from "../../src/theme/ThemeContext"
 
 export default function Fichas() {
     const { width } = useWindowDimensions()
+    const { colors } = useTheme()
 
-    // useState com a lista de fichas exibida
     const [fichas, setFichas] = useState<Ficha[]>(getFichas())
 
     useEffect(() => {
@@ -26,15 +27,22 @@ export default function Fichas() {
     const paddingH = Math.max(12, Math.min(width * 0.04, 20))
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <TouchableOpacity
-                style={[styles.botaoCriar, { marginHorizontal: paddingH }]}
+                style={[
+                    styles.botaoCriar,
+                    {
+                        backgroundColor: colors.accent,
+                        marginHorizontal: paddingH,
+                    },
+                ]}
                 onPress={() => router.push("/criarFicha")}
             >
-                <Text style={styles.textoBotao}>+ Nova Ficha</Text>
+                <Text style={[styles.textoBotao, { color: colors.accentText }]}>
+                    + Nova Ficha
+                </Text>
             </TouchableOpacity>
 
-            {/* FlatList com as fichas */}
             <FlatList
                 data={fichas}
                 keyExtractor={(item) => item.id}
@@ -53,7 +61,9 @@ export default function Fichas() {
                     </View>
                 )}
                 ListEmptyComponent={
-                    <Text style={styles.vazio}>
+                    <Text
+                        style={[styles.vazio, { color: colors.textMuted }]}
+                    >
                         Você ainda não tem nenhuma ficha. Crie a primeira!
                     </Text>
                 }
@@ -68,13 +78,8 @@ export default function Fichas() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#0f0f14",
-        paddingTop: 12,
-    },
+    container: { flex: 1, paddingTop: 12 },
     botaoCriar: {
-        backgroundColor: "#ffffff",
         paddingVertical: 12,
         borderRadius: 10,
         alignItems: "center",
@@ -82,21 +87,14 @@ const styles = StyleSheet.create({
     },
     textoBotao: {
         fontFamily: "Inter_600SemiBold",
-        color: "#000000",
         fontSize: 16,
     },
     vazio: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         textAlign: "center",
         fontSize: 14,
         paddingHorizontal: 24,
     },
-    lista: {
-        paddingBottom: 24,
-    },
-    listaVazia: {
-        flex: 1,
-        justifyContent: "center",
-    },
+    lista: { paddingBottom: 24 },
+    listaVazia: { flex: 1, justifyContent: "center" },
 })

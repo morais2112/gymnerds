@@ -21,12 +21,13 @@ import { exercicios, areasMusculares } from "../src/data/exercicios"
 import { addExercicioNaFicha } from "../src/data/fichasStore"
 import { getPRAtual } from "../src/data/prsStore"
 import { labelArea } from "../src/data/labelsArea"
+import { useTheme } from "../src/theme/ThemeContext"
 
 export default function SelecionarExercicio() {
     const params = useLocalSearchParams<{ idFicha?: string }>()
+    const { colors } = useTheme()
 
     const [areaSelecionada, setAreaSelecionada] = useState<AreaMuscular | null>(null)
-    // useState para o modal: exercicio escolhido (null = modal fechado)
     const [exParaConfigurar, setExParaConfigurar] = useState<Exercicio | null>(null)
     const [series, setSeries] = useState<string>("3")
     const [repeticoes, setRepeticoes] = useState<string>("10")
@@ -36,18 +37,14 @@ export default function SelecionarExercicio() {
         return exercicios.filter((e) => e.area === areaSelecionada)
     }, [areaSelecionada])
 
-    // Quando o usuario toca num exercicio, abre o modal com defaults
     const abrirModal = (ex: Exercicio) => {
         setExParaConfigurar(ex)
         setSeries("3")
         setRepeticoes("10")
     }
 
-    const fecharModal = () => {
-        setExParaConfigurar(null)
-    }
+    const fecharModal = () => setExParaConfigurar(null)
 
-    // Confirma e adiciona o exercicio com as configuracoes
     const confirmar = () => {
         if (!exParaConfigurar || !params.idFicha) return
         const s = parseInt(series, 10)
@@ -65,13 +62,17 @@ export default function SelecionarExercicio() {
         router.back()
     }
 
-    // PR atual do exercicio escolhido (para mostrar no modal)
     const prAtualModal =
         exParaConfigurar !== null ? getPRAtual(exParaConfigurar.id) : null
 
     return (
-        <SafeAreaView style={styles.container} edges={["bottom"]}>
-            <Text style={styles.titulo}>Filtrar por área muscular</Text>
+        <SafeAreaView
+            style={[styles.container, { backgroundColor: colors.background }]}
+            edges={["bottom"]}
+        >
+            <Text style={[styles.titulo, { color: colors.text }]}>
+                Filtrar por área muscular
+            </Text>
 
             <FiltroArea
                 areas={areasMusculares}
@@ -79,7 +80,7 @@ export default function SelecionarExercicio() {
                 onSelecionar={setAreaSelecionada}
             />
 
-            <Text style={styles.subtitulo}>
+            <Text style={[styles.subtitulo, { color: colors.textMuted }]}>
                 {lista.length} exercício(s){" "}
                 {areaSelecionada ? `em ${labelArea(areaSelecionada)}` : "no total"}
             </Text>
@@ -91,12 +92,13 @@ export default function SelecionarExercicio() {
                     <CardExercicio exercicio={item} onPress={abrirModal} />
                 )}
                 ListEmptyComponent={
-                    <Text style={styles.vazio}>Nenhum exercício para essa área.</Text>
+                    <Text style={[styles.vazio, { color: colors.textMuted }]}>
+                        Nenhum exercício para essa área.
+                    </Text>
                 }
                 contentContainerStyle={styles.listaConteudo}
             />
 
-            {/* Modal de configuracao: series + reps + PR */}
             <Modal
                 visible={exParaConfigurar !== null}
                 transparent
@@ -112,26 +114,62 @@ export default function SelecionarExercicio() {
                         activeOpacity={1}
                         onPress={fecharModal}
                     />
-                    <View style={styles.modalConteudo}>
+                    <View
+                        style={[
+                            styles.modalConteudo,
+                            {
+                                backgroundColor: colors.surface,
+                                borderColor: colors.border,
+                            },
+                        ]}
+                    >
                         {exParaConfigurar && (
                             <>
-                                {/* Header com silhueta + info do exercicio */}
-                                <View style={styles.modalHeader}>
+                                <View
+                                    style={[
+                                        styles.modalHeader,
+                                        { borderBottomColor: colors.border },
+                                    ]}
+                                >
                                     <BodySilhueta
                                         area={exParaConfigurar.area}
                                         size={44}
+                                        cor={colors.text}
+                                        corBase={colors.textDim}
                                     />
                                     <View style={styles.modalHeaderInfo}>
-                                        <Text style={styles.modalNome}>
+                                        <Text
+                                            style={[
+                                                styles.modalNome,
+                                                { color: colors.text },
+                                            ]}
+                                        >
                                             {exParaConfigurar.nome}
                                         </Text>
-                                        <Text style={styles.modalArea}>
+                                        <Text
+                                            style={[
+                                                styles.modalArea,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
                                             {labelArea(exParaConfigurar.area)}
                                         </Text>
                                     </View>
                                     <View style={styles.modalPRBox}>
-                                        <Text style={styles.modalPRLabel}>PR</Text>
-                                        <Text style={styles.modalPRValor}>
+                                        <Text
+                                            style={[
+                                                styles.modalPRLabel,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
+                                            PR
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.modalPRValor,
+                                                { color: colors.text },
+                                            ]}
+                                        >
                                             {prAtualModal !== null
                                                 ? prAtualModal + " kg"
                                                 : "—"}
@@ -139,50 +177,92 @@ export default function SelecionarExercicio() {
                                     </View>
                                 </View>
 
-                                {/* Inputs de series e reps */}
                                 <View style={styles.linhaInputs}>
                                     <View style={styles.campo}>
-                                        <Text style={styles.campoLabel}>Séries</Text>
+                                        <Text
+                                            style={[
+                                                styles.campoLabel,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
+                                            Séries
+                                        </Text>
                                         <TextInput
-                                            style={styles.campoInput}
+                                            style={[
+                                                styles.campoInput,
+                                                {
+                                                    color: colors.text,
+                                                    borderColor: colors.text,
+                                                },
+                                            ]}
                                             value={series}
                                             onChangeText={setSeries}
                                             keyboardType="numeric"
                                             placeholder="3"
-                                            placeholderTextColor="#666"
+                                            placeholderTextColor={colors.textDim}
                                             maxLength={2}
                                         />
                                     </View>
-                                    <Text style={styles.x}>×</Text>
+                                    <Text style={[styles.x, { color: colors.textDim }]}>
+                                        ×
+                                    </Text>
                                     <View style={styles.campo}>
-                                        <Text style={styles.campoLabel}>Repetições</Text>
+                                        <Text
+                                            style={[
+                                                styles.campoLabel,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
+                                            Repetições
+                                        </Text>
                                         <TextInput
-                                            style={styles.campoInput}
+                                            style={[
+                                                styles.campoInput,
+                                                {
+                                                    color: colors.text,
+                                                    borderColor: colors.text,
+                                                },
+                                            ]}
                                             value={repeticoes}
                                             onChangeText={setRepeticoes}
                                             keyboardType="numeric"
                                             placeholder="10"
-                                            placeholderTextColor="#666"
+                                            placeholderTextColor={colors.textDim}
                                             maxLength={3}
                                         />
                                     </View>
                                 </View>
 
-                                {/* Botoes */}
                                 <View style={styles.linhaBotoes}>
                                     <TouchableOpacity
-                                        style={styles.botaoCancelar}
+                                        style={[
+                                            styles.botaoCancelar,
+                                            { borderColor: colors.textMuted },
+                                        ]}
                                         onPress={fecharModal}
                                     >
-                                        <Text style={styles.botaoCancelarTexto}>
+                                        <Text
+                                            style={[
+                                                styles.botaoCancelarTexto,
+                                                { color: colors.text },
+                                            ]}
+                                        >
                                             Cancelar
                                         </Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        style={styles.botaoConfirmar}
+                                        style={[
+                                            styles.botaoConfirmar,
+                                            { backgroundColor: colors.accent },
+                                        ]}
                                         onPress={confirmar}
                                     >
-                                        <Text style={styles.botaoConfirmarTexto}>
+                                        <Text
+                                            style={[
+                                                styles.botaoConfirmarTexto,
+                                                { color: colors.accentText },
+                                            ]}
+                                        >
                                             Adicionar
                                         </Text>
                                     </TouchableOpacity>
@@ -197,17 +277,15 @@ export default function SelecionarExercicio() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#0f0f14", paddingTop: 8 },
+    container: { flex: 1, paddingTop: 8 },
     titulo: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 16,
         marginHorizontal: 16,
         marginTop: 6,
     },
     subtitulo: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         marginHorizontal: 16,
         marginTop: 4,
         marginBottom: 8,
@@ -215,7 +293,6 @@ const styles = StyleSheet.create({
     },
     vazio: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         textAlign: "center",
         marginTop: 24,
     },
@@ -227,17 +304,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 20,
     },
-    modalFundo: {
-        ...StyleSheet.absoluteFillObject,
-    },
+    modalFundo: { ...StyleSheet.absoluteFillObject },
     modalConteudo: {
-        backgroundColor: "#1c1c24",
         borderRadius: 16,
         padding: 18,
         width: "100%",
         maxWidth: 400,
         borderWidth: 1.5,
-        borderColor: "#2a2a35",
     },
     modalHeader: {
         flexDirection: "row",
@@ -246,31 +319,13 @@ const styles = StyleSheet.create({
         marginBottom: 18,
         paddingBottom: 14,
         borderBottomWidth: 1,
-        borderBottomColor: "#2a2a35",
     },
     modalHeaderInfo: { flex: 1 },
-    modalNome: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
-    modalArea: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-        marginTop: 2,
-    },
+    modalNome: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    modalArea: { fontFamily: "Inter_400Regular", fontSize: 12, marginTop: 2 },
     modalPRBox: { alignItems: "flex-end" },
-    modalPRLabel: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 11,
-    },
-    modalPRValor: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
+    modalPRLabel: { fontFamily: "Inter_400Regular", fontSize: 11 },
+    modalPRValor: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
     linhaInputs: {
         flexDirection: "row",
         alignItems: "flex-end",
@@ -280,49 +335,33 @@ const styles = StyleSheet.create({
     campo: { flex: 1 },
     campoLabel: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         fontSize: 12,
         marginBottom: 6,
     },
     campoInput: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 20,
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
         textAlign: "center",
     },
-    x: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#666",
-        fontSize: 20,
-        paddingBottom: 8,
-    },
+    x: { fontFamily: "Inter_600SemiBold", fontSize: 20, paddingBottom: 8 },
     linhaBotoes: { flexDirection: "row", gap: 10 },
     botaoCancelar: {
         flex: 1,
         borderWidth: 1.5,
-        borderColor: "#aaaaaa",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    botaoCancelarTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-    },
+    botaoCancelarTexto: { fontFamily: "Inter_600SemiBold" },
     botaoConfirmar: {
         flex: 1,
-        backgroundColor: "#ffffff",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    botaoConfirmarTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-    },
+    botaoConfirmarTexto: { fontFamily: "Inter_600SemiBold" },
 })

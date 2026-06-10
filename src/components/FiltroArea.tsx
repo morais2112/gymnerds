@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { AreaMuscular } from "../types"
 import { labelArea } from "../data/labelsArea"
 import BodySilhueta from "./BodySilhueta"
+import { useTheme } from "../theme/ThemeContext"
 
 type FiltroAreaProps = {
     areas: AreaMuscular[]
@@ -11,6 +12,8 @@ type FiltroAreaProps = {
 }
 
 const FiltroArea = (props: FiltroAreaProps) => {
+    const { colors } = useTheme()
+
     return (
         <View style={styles.wrapper}>
             <ScrollView
@@ -18,37 +21,78 @@ const FiltroArea = (props: FiltroAreaProps) => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.container}
             >
-                {/* Botao Todos - usa Ionicons (nao e grupo muscular) */}
+                {/* Botao Todos */}
                 <TouchableOpacity
-                    style={[styles.botao, props.areaSelecionada === null && styles.botaoAtivo]}
+                    style={[
+                        styles.botao,
+                        {
+                            backgroundColor:
+                                props.areaSelecionada === null
+                                    ? colors.accent
+                                    : colors.surface,
+                            borderColor:
+                                props.areaSelecionada === null
+                                    ? colors.accent
+                                    : colors.border,
+                        },
+                    ]}
                     onPress={() => props.onSelecionar(null)}
                 >
                     <Ionicons
                         name="apps-outline"
                         size={14}
-                        color={props.areaSelecionada === null ? "#000000" : "#ffffff"}
+                        color={
+                            props.areaSelecionada === null
+                                ? colors.accentText
+                                : colors.text
+                        }
                     />
-                    <Text style={[styles.texto, props.areaSelecionada === null && styles.textoAtivo]}>
+                    <Text
+                        style={[
+                            styles.texto,
+                            {
+                                color:
+                                    props.areaSelecionada === null
+                                        ? colors.accentText
+                                        : colors.text,
+                            },
+                        ]}
+                    >
                         Todos
                     </Text>
                 </TouchableOpacity>
 
-                {/* Botoes de areas - silhueta de corpo destacando o musculo */}
+                {/* Botoes das areas */}
                 {props.areas.map((area) => {
                     const ativo = area === props.areaSelecionada
                     return (
                         <TouchableOpacity
                             key={area}
-                            style={[styles.botao, ativo && styles.botaoAtivo]}
+                            style={[
+                                styles.botao,
+                                {
+                                    backgroundColor: ativo
+                                        ? colors.accent
+                                        : colors.surface,
+                                    borderColor: ativo
+                                        ? colors.accent
+                                        : colors.border,
+                                },
+                            ]}
                             onPress={() => props.onSelecionar(area)}
                         >
                             <BodySilhueta
                                 area={area}
                                 size={18}
-                                cor={ativo ? "#000000" : "#ffffff"}
-                                corBase={ativo ? "#aaaaaa" : "#555"}
+                                cor={ativo ? colors.accentText : colors.text}
+                                corBase={ativo ? colors.textMuted : colors.textDim}
                             />
-                            <Text style={[styles.texto, ativo && styles.textoAtivo]}>
+                            <Text
+                                style={[
+                                    styles.texto,
+                                    { color: ativo ? colors.accentText : colors.text },
+                                ]}
+                            >
                                 {labelArea(area)}
                             </Text>
                         </TouchableOpacity>
@@ -62,9 +106,7 @@ const FiltroArea = (props: FiltroAreaProps) => {
 export default FiltroArea
 
 const styles = StyleSheet.create({
-    wrapper: {
-        height: 60,
-    },
+    wrapper: { height: 60 },
     container: {
         paddingHorizontal: 12,
         paddingVertical: 8,
@@ -74,25 +116,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 6,
-        backgroundColor: "#1c1c24",
-        borderColor: "#2a2a35",
         borderWidth: 1.5,
         borderRadius: 20,
         paddingHorizontal: 14,
         paddingVertical: 6,
         marginRight: 8,
     },
-    botaoAtivo: {
-        backgroundColor: "#ffffff",
-        borderColor: "#ffffff",
-    },
     texto: {
         fontFamily: "Inter_400Regular",
-        color: "#ffffff",
         fontSize: 13,
-    },
-    textoAtivo: {
-        color: "#000000",
-        fontFamily: "Inter_600SemiBold",
     },
 })

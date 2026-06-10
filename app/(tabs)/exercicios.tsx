@@ -15,9 +15,11 @@ import { AreaMuscular, Exercicio } from "../../src/types"
 import { exercicios, areasMusculares } from "../../src/data/exercicios"
 import { getPRAtual, subscribe } from "../../src/data/prsStore"
 import { labelArea } from "../../src/data/labelsArea"
+import { useTheme } from "../../src/theme/ThemeContext"
 
 export default function ExerciciosTab() {
     const { width } = useWindowDimensions()
+    const { colors } = useTheme()
 
     const [areaSelecionada, setAreaSelecionada] = useState<AreaMuscular | null>(null)
     const [versao, setVersao] = useState<number>(0)
@@ -35,11 +37,11 @@ export default function ExerciciosTab() {
     const paddingH = Math.max(12, Math.min(width * 0.04, 20))
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <View style={[styles.cabecalho, { paddingHorizontal: paddingH }]}>
-                <Text style={styles.titulo}>Meus PRs</Text>
-                <Text style={styles.subtitulo}>
-                    Toque num exercicio para registrar seu peso maximo
+                <Text style={[styles.titulo, { color: colors.text }]}>Meus PRs</Text>
+                <Text style={[styles.subtitulo, { color: colors.textMuted }]}>
+                    Toque num exercício para registrar seu peso máximo
                 </Text>
             </View>
 
@@ -58,7 +60,14 @@ export default function ExerciciosTab() {
                     const pr = getPRAtual(item.id)
                     return (
                         <TouchableOpacity
-                            style={[styles.card, { marginHorizontal: paddingH }]}
+                            style={[
+                                styles.card,
+                                {
+                                    backgroundColor: colors.surface,
+                                    borderColor: colors.border,
+                                    marginHorizontal: paddingH,
+                                },
+                            ]}
                             onPress={() =>
                                 router.push({
                                     pathname: "/registrarPR",
@@ -66,29 +75,68 @@ export default function ExerciciosTab() {
                                 })
                             }
                         >
-                            <View style={styles.iconeBox}>
-                                <BodySilhueta area={item.area} size={32} />
+                            <View
+                                style={[
+                                    styles.iconeBox,
+                                    { backgroundColor: colors.surfaceAlt },
+                                ]}
+                            >
+                                <BodySilhueta
+                                    area={item.area}
+                                    size={32}
+                                    cor={colors.text}
+                                    corBase={colors.textDim}
+                                />
                             </View>
                             <View style={styles.cardEsquerda}>
-                                <Text style={styles.nome} numberOfLines={1} ellipsizeMode="tail">
+                                <Text
+                                    style={[styles.nome, { color: colors.text }]}
+                                    numberOfLines={1}
+                                    ellipsizeMode="tail"
+                                >
                                     {item.nome}
                                 </Text>
-                                <Text style={styles.area}>{labelArea(item.area)}</Text>
+                                <Text
+                                    style={[styles.area, { color: colors.textMuted }]}
+                                >
+                                    {labelArea(item.area)}
+                                </Text>
                             </View>
                             <View style={styles.cardDireita}>
                                 {pr !== null ? (
                                     <>
-                                        <Text style={styles.prValor}>{pr}</Text>
-                                        <Text style={styles.prUnidade}>kg</Text>
+                                        <Text
+                                            style={[
+                                                styles.prValor,
+                                                { color: colors.text },
+                                            ]}
+                                        >
+                                            {pr}
+                                        </Text>
+                                        <Text
+                                            style={[
+                                                styles.prUnidade,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
+                                            kg
+                                        </Text>
                                     </>
                                 ) : (
                                     <View style={styles.semPR}>
                                         <Ionicons
                                             name="add-circle-outline"
                                             size={20}
-                                            color="#aaaaaa"
+                                            color={colors.textMuted}
                                         />
-                                        <Text style={styles.semPRTexto}>Sem PR</Text>
+                                        <Text
+                                            style={[
+                                                styles.semPRTexto,
+                                                { color: colors.textMuted },
+                                            ]}
+                                        >
+                                            Sem PR
+                                        </Text>
                                     </View>
                                 )}
                             </View>
@@ -96,7 +144,9 @@ export default function ExerciciosTab() {
                     )
                 }}
                 ListEmptyComponent={
-                    <Text style={styles.vazio}>Nenhum exercicio para essa area.</Text>
+                    <Text style={[styles.vazio, { color: colors.textMuted }]}>
+                        Nenhum exercício para essa área.
+                    </Text>
                 }
                 contentContainerStyle={styles.listaConteudo}
                 showsVerticalScrollIndicator={false}
@@ -106,18 +156,20 @@ export default function ExerciciosTab() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#0f0f14", paddingTop: 12 },
+    container: { flex: 1, paddingTop: 12 },
     cabecalho: { marginBottom: 4 },
-    titulo: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 22 },
-    subtitulo: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 13, marginTop: 2 },
+    titulo: { fontFamily: "Inter_600SemiBold", fontSize: 22 },
+    subtitulo: {
+        fontFamily: "Inter_400Regular",
+        fontSize: 13,
+        marginTop: 2,
+    },
     lista: { flex: 1 },
     card: {
-        backgroundColor: "#1c1c24",
         borderRadius: 12,
         padding: 12,
         marginVertical: 6,
         borderWidth: 1.5,
-        borderColor: "#2a2a35",
         flexDirection: "row",
         alignItems: "center",
         gap: 12,
@@ -126,18 +178,30 @@ const styles = StyleSheet.create({
         width: 50,
         height: 56,
         borderRadius: 10,
-        backgroundColor: "#2a2a35",
         alignItems: "center",
         justifyContent: "center",
     },
     cardEsquerda: { flex: 1 },
-    nome: { fontFamily: "Inter_600SemiBold", fontSize: 15, color: "#ffffff", marginBottom: 4 },
-    area: { fontFamily: "Inter_400Regular", fontSize: 12, color: "#aaaaaa" },
-    cardDireita: { flexDirection: "row", alignItems: "baseline", gap: 4, flexShrink: 0 },
-    prValor: { fontFamily: "Inter_600SemiBold", color: "#ffffff", fontSize: 20 },
-    prUnidade: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 13 },
+    nome: {
+        fontFamily: "Inter_600SemiBold",
+        fontSize: 15,
+        marginBottom: 4,
+    },
+    area: { fontFamily: "Inter_400Regular", fontSize: 12 },
+    cardDireita: {
+        flexDirection: "row",
+        alignItems: "baseline",
+        gap: 4,
+        flexShrink: 0,
+    },
+    prValor: { fontFamily: "Inter_600SemiBold", fontSize: 20 },
+    prUnidade: { fontFamily: "Inter_400Regular", fontSize: 13 },
     semPR: { flexDirection: "row", alignItems: "center", gap: 4 },
-    semPRTexto: { fontFamily: "Inter_400Regular", color: "#aaaaaa", fontSize: 12 },
+    semPRTexto: { fontFamily: "Inter_400Regular", fontSize: 12 },
     listaConteudo: { paddingTop: 4, paddingBottom: 24 },
-    vazio: { fontFamily: "Inter_400Regular", color: "#aaaaaa", textAlign: "center", marginTop: 24 },
+    vazio: {
+        fontFamily: "Inter_400Regular",
+        textAlign: "center",
+        marginTop: 24,
+    },
 })

@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { Ficha } from "../types"
 import { getFichas, subscribe as subFichas } from "../data/fichasStore"
 import { addSessao } from "../data/sessaoStore"
+import { useTheme } from "../theme/ThemeContext"
 
 type Props = {
     visivel: boolean
@@ -22,17 +23,16 @@ type Props = {
 }
 
 const ModalRegistrarTreino = (props: Props) => {
+    const { colors } = useTheme()
     const [fichas, setFichas] = useState<Ficha[]>(getFichas())
     const [fichaSelecionada, setFichaSelecionada] = useState<Ficha | null>(null)
     const [duracao, setDuracao] = useState<string>("60")
 
-    // useEffect com cleanup - escuta mudancas nas fichas (Aula 4)
     useEffect(() => {
         const unsub = subFichas(() => setFichas([...getFichas()]))
         return unsub
     }, [])
 
-    // Quando o modal abre, reseta o estado
     useEffect(() => {
         if (props.visivel) {
             setFichaSelecionada(null)
@@ -76,14 +76,22 @@ const ModalRegistrarTreino = (props: Props) => {
                     activeOpacity={1}
                     onPress={props.onFechar}
                 />
-                <View style={styles.caixa}>
+                <View
+                    style={[
+                        styles.caixa,
+                        { backgroundColor: colors.surface, borderColor: colors.border },
+                    ]}
+                >
                     <View style={styles.header}>
-                        <Ionicons name="checkmark-circle-outline" size={28} color="#4dff9d" />
-                        <Text style={styles.titulo}>Registrar treino feito</Text>
+                        <Ionicons name="checkmark-circle-outline" size={28} color={colors.success} />
+                        <Text style={[styles.titulo, { color: colors.text }]}>
+                            Registrar treino feito
+                        </Text>
                     </View>
-                    <Text style={styles.subtitulo}>Qual ficha você treinou?</Text>
+                    <Text style={[styles.subtitulo, { color: colors.textMuted }]}>
+                        Qual ficha você treinou?
+                    </Text>
 
-                    {/* FlatList das fichas (Aula 6) */}
                     <View style={styles.listaWrapper}>
                         <FlatList
                             data={fichas}
@@ -92,7 +100,13 @@ const ModalRegistrarTreino = (props: Props) => {
                                 <TouchableOpacity
                                     style={[
                                         styles.itemFicha,
-                                        fichaSelecionada?.id === item.id && styles.itemFichaAtivo,
+                                        {
+                                            backgroundColor: colors.surfaceAlt,
+                                            borderColor:
+                                                fichaSelecionada?.id === item.id
+                                                    ? colors.success
+                                                    : "transparent",
+                                        },
                                     ]}
                                     onPress={() => setFichaSelecionada(item)}
                                 >
@@ -105,46 +119,58 @@ const ModalRegistrarTreino = (props: Props) => {
                                         size={18}
                                         color={
                                             fichaSelecionada?.id === item.id
-                                                ? "#4dff9d"
-                                                : "#aaaaaa"
+                                                ? colors.success
+                                                : colors.textMuted
                                         }
                                     />
-                                    <Text style={styles.itemFichaNome} numberOfLines={1}>
+                                    <Text
+                                        style={[styles.itemFichaNome, { color: colors.text }]}
+                                        numberOfLines={1}
+                                    >
                                         {item.nome}
                                     </Text>
                                 </TouchableOpacity>
                             )}
                             ListEmptyComponent={
-                                <Text style={styles.vazio}>
+                                <Text style={[styles.vazio, { color: colors.textMuted }]}>
                                     Sem fichas. Crie uma primeiro.
                                 </Text>
                             }
                         />
                     </View>
 
-                    <Text style={styles.label}>Duração (min)</Text>
+                    <Text style={[styles.label, { color: colors.textMuted }]}>
+                        Duração (min)
+                    </Text>
                     <TextInput
-                        style={styles.input}
+                        style={[
+                            styles.input,
+                            { color: colors.text, borderColor: colors.text },
+                        ]}
                         value={duracao}
                         onChangeText={setDuracao}
                         keyboardType="numeric"
                         placeholder="60"
-                        placeholderTextColor="#666"
+                        placeholderTextColor={colors.textDim}
                         maxLength={3}
                     />
 
                     <View style={styles.linhaBotoes}>
                         <TouchableOpacity
-                            style={styles.botaoCancelar}
+                            style={[styles.botaoCancelar, { borderColor: colors.textMuted }]}
                             onPress={props.onFechar}
                         >
-                            <Text style={styles.botaoCancelarTexto}>Cancelar</Text>
+                            <Text style={[styles.botaoCancelarTexto, { color: colors.text }]}>
+                                Cancelar
+                            </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.botaoConfirmar}
+                            style={[styles.botaoConfirmar, { backgroundColor: colors.accent }]}
                             onPress={confirmar}
                         >
-                            <Text style={styles.botaoConfirmarTexto}>Salvar</Text>
+                            <Text style={[styles.botaoConfirmarTexto, { color: colors.accentText }]}>
+                                Salvar
+                            </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -165,13 +191,11 @@ const styles = StyleSheet.create({
     },
     fundo: { ...StyleSheet.absoluteFillObject },
     caixa: {
-        backgroundColor: "#1c1c24",
         borderRadius: 16,
         padding: 18,
         width: "100%",
         maxWidth: 400,
         borderWidth: 1.5,
-        borderColor: "#2a2a35",
     },
     header: {
         flexDirection: "row",
@@ -179,57 +203,34 @@ const styles = StyleSheet.create({
         gap: 10,
         marginBottom: 12,
     },
-    titulo: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-        fontSize: 16,
-    },
-    subtitulo: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 13,
-        marginBottom: 8,
-    },
+    titulo: { fontFamily: "Inter_600SemiBold", fontSize: 16 },
+    subtitulo: { fontFamily: "Inter_400Regular", fontSize: 13, marginBottom: 8 },
     listaWrapper: { maxHeight: 200, marginBottom: 16 },
     itemFicha: {
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        backgroundColor: "#2a2a35",
         padding: 10,
         borderRadius: 8,
         marginBottom: 6,
         borderWidth: 1.5,
-        borderColor: "transparent",
-    },
-    itemFichaAtivo: {
-        borderColor: "#4dff9d",
     },
     itemFichaNome: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 14,
         flex: 1,
     },
     vazio: {
         fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
         fontSize: 13,
         textAlign: "center",
         paddingVertical: 12,
     },
-    label: {
-        fontFamily: "Inter_400Regular",
-        color: "#aaaaaa",
-        fontSize: 12,
-        marginBottom: 4,
-    },
+    label: { fontFamily: "Inter_400Regular", fontSize: 12, marginBottom: 4 },
     input: {
         fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
         fontSize: 18,
         borderWidth: 1.5,
-        borderColor: "#ffffff",
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
@@ -240,24 +241,16 @@ const styles = StyleSheet.create({
     botaoCancelar: {
         flex: 1,
         borderWidth: 1.5,
-        borderColor: "#aaaaaa",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    botaoCancelarTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#ffffff",
-    },
+    botaoCancelarTexto: { fontFamily: "Inter_600SemiBold" },
     botaoConfirmar: {
         flex: 1,
-        backgroundColor: "#ffffff",
         borderRadius: 10,
         paddingVertical: 12,
         alignItems: "center",
     },
-    botaoConfirmarTexto: {
-        fontFamily: "Inter_600SemiBold",
-        color: "#000000",
-    },
+    botaoConfirmarTexto: { fontFamily: "Inter_600SemiBold" },
 })
