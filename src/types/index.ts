@@ -1,3 +1,4 @@
+// "Areas" do treino - inclui grupos musculares + categorias funcionais
 export type AreaMuscular =
     | "Peito"
     | "Triceps"
@@ -8,6 +9,8 @@ export type AreaMuscular =
     | "Quadriceps"
     | "Panturrilha"
     | "Abdomen"
+    | "Cardio"
+    | "Esportes"
 
 export type Exercicio = {
     id: string
@@ -53,11 +56,10 @@ export type ClassificacaoIMC =
     | "Obesidade grau II"
     | "Obesidade grau III"
 
-// Uma sessao de treino realizada
 export type SessaoTreino = {
     id: string
     idFicha: string
-    nomeFicha: string  // snapshot do nome no momento (se a ficha for apagada, ainda mostra)
-    data: string       // ISO
+    nomeFicha: string
+    data: string
     duracaoMin: number
 }

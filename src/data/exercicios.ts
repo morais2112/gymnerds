@@ -1,6 +1,6 @@
 import { AreaMuscular, Exercicio } from "../types"
 
-// Array com os exercicios disponiveis na academia
+// Array com os exercicios disponiveis na academia + cardio + esportes
 export const exercicios: Exercicio[] = [
     // Peito
     { id: "1", nome: "Supino Reto", area: "Peito" },
@@ -97,9 +97,63 @@ export const exercicios: Exercicio[] = [
     { id: "76", nome: "Elevacao de Pernas", area: "Abdomen" },
     { id: "77", nome: "Cross Over Crunch", area: "Abdomen" },
     { id: "78", nome: "Bicicleta no Ar", area: "Abdomen" },
+
+    // Cardio
+    { id: "79", nome: "Esteira (Caminhada)", area: "Cardio" },
+    { id: "80", nome: "Esteira (Corrida)", area: "Cardio" },
+    { id: "81", nome: "Corrida ao Ar Livre", area: "Cardio" },
+    { id: "82", nome: "Caminhada ao Ar Livre", area: "Cardio" },
+    { id: "83", nome: "Bicicleta Ergometrica", area: "Cardio" },
+    { id: "84", nome: "Bicicleta ao Ar Livre", area: "Cardio" },
+    { id: "85", nome: "Spinning", area: "Cardio" },
+    { id: "86", nome: "Eliptico", area: "Cardio" },
+    { id: "87", nome: "Stepper", area: "Cardio" },
+    { id: "88", nome: "Remo Ergometrico", area: "Cardio" },
+    { id: "89", nome: "Pular Corda", area: "Cardio" },
+    { id: "90", nome: "Polichinelo", area: "Cardio" },
+    { id: "91", nome: "Burpee", area: "Cardio" },
+    { id: "92", nome: "Mountain Climber", area: "Cardio" },
+    { id: "93", nome: "HIIT", area: "Cardio" },
+    { id: "94", nome: "Tabata", area: "Cardio" },
+    { id: "95", nome: "Subir Escadas", area: "Cardio" },
+    { id: "96", nome: "Air Bike (Assault Bike)", area: "Cardio" },
+    { id: "97", nome: "Sprint", area: "Cardio" },
+    { id: "98", nome: "Trote", area: "Cardio" },
+
+    // Esportes
+    { id: "99", nome: "Natacao", area: "Esportes" },
+    { id: "100", nome: "Hidroginastica", area: "Esportes" },
+    { id: "101", nome: "Futebol", area: "Esportes" },
+    { id: "102", nome: "Futsal", area: "Esportes" },
+    { id: "103", nome: "Basquete", area: "Esportes" },
+    { id: "104", nome: "Volei", area: "Esportes" },
+    { id: "105", nome: "Volei de Praia", area: "Esportes" },
+    { id: "106", nome: "Tenis", area: "Esportes" },
+    { id: "107", nome: "Padel", area: "Esportes" },
+    { id: "108", nome: "Beach Tennis", area: "Esportes" },
+    { id: "109", nome: "Boxe", area: "Esportes" },
+    { id: "110", nome: "Muay Thai", area: "Esportes" },
+    { id: "111", nome: "Jiu-Jitsu", area: "Esportes" },
+    { id: "112", nome: "Judo", area: "Esportes" },
+    { id: "113", nome: "Karate", area: "Esportes" },
+    { id: "114", nome: "MMA", area: "Esportes" },
+    { id: "115", nome: "Surfe", area: "Esportes" },
+    { id: "116", nome: "Skate", area: "Esportes" },
+    { id: "117", nome: "Escalada", area: "Esportes" },
+    { id: "118", nome: "Crossfit", area: "Esportes" },
+    { id: "119", nome: "Funcional", area: "Esportes" },
+    { id: "120", nome: "Yoga", area: "Esportes" },
+    { id: "121", nome: "Pilates", area: "Esportes" },
+    { id: "122", nome: "Danca", area: "Esportes" },
+    { id: "123", nome: "Zumba", area: "Esportes" },
+    { id: "124", nome: "Handebol", area: "Esportes" },
+    { id: "125", nome: "Rugby", area: "Esportes" },
+    { id: "126", nome: "Beisebol", area: "Esportes" },
+    { id: "127", nome: "Golfe", area: "Esportes" },
+    { id: "128", nome: "Ciclismo", area: "Esportes" },
 ]
 
-// Lista de areas musculares para o filtro
+// Lista de areas para o filtro (na ordem de exibicao)
 export const areasMusculares: AreaMuscular[] = [
     "Peito",
     "Triceps",
@@ -110,4 +164,6 @@ export const areasMusculares: AreaMuscular[] = [
     "Quadriceps",
     "Panturrilha",
     "Abdomen",
+    "Cardio",
+    "Esportes",
 ]
